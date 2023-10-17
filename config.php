@@ -18,7 +18,7 @@ $CFG->dboptions = array (
   'dbcollation' => 'utf8mb4_unicode_ci',
 );
 
-$CFG->wwwroot   = 'https://aulavirtual.dfpol.es';
+$CFG->wwwroot   = 'https://aulavirtual.dfpol.es/desarrollo';
 $CFG->dataroot  = '/home/u704129739/domains/dfpol.es/public_html/aulavirtual/.htuvcmxvorwixd.data/';
 $CFG->admin     = 'admin';
 
