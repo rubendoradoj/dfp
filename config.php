@@ -19,7 +19,7 @@ $CFG->dboptions = array (
 );
 
 $CFG->wwwroot   = 'https://pruebas.dfpol.es';
-$CFG->dataroot  = '/home/u704129739/domains/dfpol.es/public_html/aulavirtual/.htuvcmxvorwixd.data/';
+$CFG->dataroot  = '/home/u704129739/domains/dfpol.es/.htuvcmxvorwixd.data/';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
