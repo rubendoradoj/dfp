@@ -10,7 +10,7 @@ $id = required_param('id', PARAM_INT); // course id.
 
 $url = new moodle_url('/report/misestadisticas/index.php', array('id'=>$id));
 
-$PAGE->set_url($url);
+//$PAGE->set_url($url);
 $PAGE->set_pagelayout('course');
 
 $PAGE->navbar->add('Mis Estadísticas');
