@@ -43,7 +43,7 @@ require(['jquery'], function($) {
 		})      
 	});
 	$('.modtype_label').css('cursor', 'pointer');
-	$(".rui-contentafterlink").find("h4").append("&nbsp;&nbsp;&nbsp;&nbsp;<img src='https://aulavirtual.dfpol.es/course/format/onetopic/down.svg' style='width: 20px'>");
+	$(".rui-contentafterlink").find("h4").append("&nbsp;&nbsp;&nbsp;&nbsp;<img src='/course/format/onetopic/down.svg' style='width: 20px'>");
 	$(".course-teachers-box").hide();
 	
 	$('.modtype_label').click();
