@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$ADMIN->add('reports', new admin_externalpage('reportmisestadisticas', get_string('pluginname', 'report_misestadisticas'),
-        $CFG->wwwroot."/report/misestadisticas/index.php", 'report/performance:view'));
+$ADMIN->add('reports', new admin_externalpage('reporttestrealizados', get_string('pluginname', 'report_testrealizados'),
+        $CFG->wwwroot."/report/testrealizados/index.php", 'report/performance:view'));
 
 // No report settings.
 $settings = null;

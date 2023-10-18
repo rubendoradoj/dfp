@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains functions used by the misestadisticas report
+ * This file contains functions used by the testrealizados report
  *
  * @package    report
- * @subpackage misestadisticas
+ * @subpackage testrealizados
  * @copyright  2009 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,11 +32,11 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $course The course to object for the report
  * @param stdClass $context The context of the course
  */
-function report_misestadisticas_extend_navigation_course($navigation, $course, $context) {
+function report_testrealizados_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $OUTPUT;
     if (has_capability('report/participation:view', $context)) {
-        $url = new moodle_url('/report/misestadisticas/index.php', array('id'=>$course->id));
-        $navigation->add(get_string('pluginname', 'report_misestadisticas'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $url = new moodle_url('/report/testrealizados/index.php', array('id'=>$course->id));
+        $navigation->add(get_string('pluginname', 'report_testrealizados'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
 
@@ -47,12 +47,12 @@ function report_misestadisticas_extend_navigation_course($navigation, $course, $
  * @param stdClass $currentcontext Current context of block
  * @return array
  */
-function report_misestadisticas_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function report_testrealizados_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*'                          => get_string('page-x', 'pagetype'),
         'report-*'                   => get_string('page-report-x', 'pagetype'),
-        'report-misestadisticas-*'     => get_string('page-report-misestadisticas-x',  'report_misestadisticas'),
-        'report-misestadisticas-index' => get_string('page-report-misestadisticas-index',  'report_misestadisticas'),
+        'report-testrealizados-*'     => get_string('page-report-testrealizados-x',  'report_testrealizados'),
+        'report-testrealizados-index' => get_string('page-report-testrealizados-index',  'report_testrealizados'),
     );
     return $array;
 }
@@ -64,7 +64,7 @@ function report_misestadisticas_page_type_list($pagetype, $parentcontext, $curre
  *
  * @return bool returns true if the store is supported by the report, false otherwise.
  */
-function report_misestadisticas_supports_logstore($instance) {
+function report_testrealizados_supports_logstore($instance) {
     if ($instance instanceof \core\log\sql_internal_table_reader) {
         return true;
     }
