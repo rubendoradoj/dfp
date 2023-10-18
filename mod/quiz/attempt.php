@@ -190,7 +190,7 @@ echo '<script>
     function createForm(){
         const renderARef = document.createElement("form");
         renderARef.setAttribute("method","post");
-        renderARef.setAttribute("action", "https://aulavirtual.dfpol.es/mod/quiz/processattempt.php");
+        renderARef.setAttribute("action", "/mod/quiz/processattempt.php");
         renderARef.setAttribute("style","margin-left: auto;display: none;");
         return renderARef;
     }
