@@ -633,8 +633,8 @@ class renderer extends plugin_renderer_base {
             $nextlabel = get_string('navigatenext', 'quiz');
         }
 
-        $output .= html_writer::empty_tag('input', ['type' => 'submit', 'name' => 'next',
-            'value' => 'Con riesgo', 'class' => 'mod_quiz-next-nav btn btn-danger', 'id' => 'mod_quiz-next-nav']);
+        //$output .= html_writer::empty_tag('input', ['type' => 'submit', 'name' => 'next',
+        //    'value' => 'Con riesgo', 'class' => 'mod_quiz-next-nav btn btn-danger', 'id' => 'mod_quiz-next-nav']);
 
 
         $output .= html_writer::empty_tag('input', ['type' => 'submit', 'name' => 'next',
