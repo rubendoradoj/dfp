@@ -25,7 +25,7 @@ $PAGE->set_heading(format_string($course->fullname, true, array('context' => $co
 print_r("------- ");
 print_r($PAGE->navigation);
 
-print_r("-------2 ");
+/*print_r("-------2 ");
 print_r($PAGE->navbar);
 
 print_r("-------3 ");
@@ -38,7 +38,7 @@ print_r("-------5 ");
 print_r($PAGE->settingsnav);
 
 print_r("-------6 ");
-print_r($PAGE->primarynavcombined);
+print_r($PAGE->primarynavcombined);*/
 
 
 
