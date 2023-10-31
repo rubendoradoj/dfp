@@ -27,3 +27,16 @@ $PAGE->set_heading(format_string($course->fullname, true, array('context' => $co
 echo $OUTPUT->header();
 
 echo $OUTPUT->footer();
+
+echo "<script>
+    var menus = document.getElementsByClassName('nav-link');
+    var miElemento = null;
+    
+    for (var i = 0; i < menus.length; i++) {
+      if (menus[i].ariaLabel == 'Mis Estadísticas') {
+          miElemento = menus[i];
+          miElemento.classList.add('active')
+          break;
+      }
+    }
+</script>";
