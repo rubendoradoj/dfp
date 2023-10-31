@@ -13,11 +13,13 @@ $id = required_param('id', PARAM_INT); // course id.
 //$PAGE->set_url($url);
 $PAGE->set_pagelayout('course');
 
-/*$myNavigationNode = $PAGE->navbar->add('Configurador de Test2');
-$myNavigationNode->make_active();*/
+$myNavigationNode = $PAGE->navbar->add('Configurador de Test');
+
+$PAGE->secondarynav->make_active();
+
 
 print_r("---- ");
-print_r($PAGE->navbar->get_tabs_array());
+print_r($PAGE->secondarynav->get_tabs_array());
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
