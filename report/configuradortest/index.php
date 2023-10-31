@@ -13,8 +13,8 @@ $id = required_param('id', PARAM_INT); // course id.
 //$PAGE->set_url($url);
 $PAGE->set_pagelayout('course');
 
-$myNavigationNode = $PAGE->navbar->add('Configurador de Test2');
-$myNavigationNode->make_active();
+/*$myNavigationNode = $PAGE->navbar->add('Configurador de Test2');
+$myNavigationNode->make_active();*/
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
@@ -23,7 +23,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 require_login($course);
 $context = context_course::instance($course->id);
 
-$PAGE->set_title("Configurador de Testxx");
+$PAGE->set_title("Configurador de Test");
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)), true);
 echo $OUTPUT->header();
 
