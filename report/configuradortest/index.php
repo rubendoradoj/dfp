@@ -14,6 +14,7 @@ $id = required_param('id', PARAM_INT); // course id.
 $PAGE->set_pagelayout('course');
 
 $myNavigationNode = $PAGE->navbar->add('Configurador de Test');
+
 $myNavigationNode->make_active();
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
