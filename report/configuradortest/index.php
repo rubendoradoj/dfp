@@ -25,12 +25,12 @@ $PAGE->set_heading(format_string($course->fullname, true, array('context' => $co
 /*print_r("------- ");
 print_r($PAGE->navigation);*/
 
-print_r("-------2 ");
-print_r($PAGE->navbar);
-/*
+/*print_r("-------2 ");
+print_r($PAGE->navbar);*/
+
 print_r("-------3 ");
 print_r($PAGE->secondarynav);
-
+/*
 print_r("-------4 ");
 print_r($PAGE->primarynav);
 
