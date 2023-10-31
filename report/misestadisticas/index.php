@@ -33,7 +33,7 @@ echo "<script>
     var miElemento = null;
     
     for (var i = 0; i < menus.length; i++) {
-      if (menus[i].ariaLabel == 'Mis Estadísticas') {
+      if (menus[i].ariaLabel == 'Mis estadísticas') {
           miElemento = menus[i];
           miElemento.classList.add('active')
           break;
