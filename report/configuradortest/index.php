@@ -15,7 +15,7 @@ $PAGE->set_pagelayout('course');
 
 $myNavigationNode = $PAGE->navbar->add('Configurador de Test');
 
-$PAGE->secondarynav->make_active();
+//$PAGE->secondarynav->make_active();
 
 
 //print_r("---- ");
