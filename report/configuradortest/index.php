@@ -17,7 +17,7 @@ $PAGE->set_pagelayout('course');
 $myNavigationNode->make_active();*/
 
 print_r("---- ");
-print_r($PAGE->navbar->get_items());
+print_r($PAGE->navbar->get_tabs_array());
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
