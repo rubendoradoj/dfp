@@ -23,7 +23,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 require_login($course);
 $context = context_course::instance($course->id);
 
-$PAGE->set_title("Configurador de Test");
+$PAGE->set_title("Configurador de Testxx");
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)), true);
 echo $OUTPUT->header();
 
