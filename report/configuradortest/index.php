@@ -25,7 +25,7 @@ print_r($PAGE->secondarynav->get_children_key_list());
 print_r("----3 ");
 print_r($PAGE->secondarynav->get_siblings());
 print_r("----4 ");*/
-print_r($PAGE->secondarynav);
+//print_r($PAGE->secondarynav);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
