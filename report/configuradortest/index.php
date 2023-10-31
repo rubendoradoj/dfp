@@ -38,8 +38,8 @@ print_r($PAGE->primarynav);
 /*print_r("-------5 ");
 print_r($PAGE->settingsnav);*/
 
-print_r("-------6 ");
-print_r($PAGE->primarynavcombined);
+/*print_r("-------6 ");
+print_r($PAGE->primarynavcombined);*/
 
 
 
