@@ -16,6 +16,9 @@ $PAGE->set_pagelayout('course');
 /*$myNavigationNode = $PAGE->navbar->add('Configurador de Test2');
 $myNavigationNode->make_active();*/
 
+print_r("---- ");
+print_r($PAGE->navbar->get_items());
+
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
 }
