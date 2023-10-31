@@ -33,7 +33,7 @@ echo "<script>
     for (var i = 0; i < menus.length; i++) {
       if (menus[i].ariaLabel == 'Configurador de Test') {
           miElemento = menus[i];
-          miElemento.classList.add("active")
+          miElemento.classList.add('active')
           break;
       }
     }
