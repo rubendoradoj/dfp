@@ -18,8 +18,14 @@ $myNavigationNode = $PAGE->navbar->add('Configurador de Test');
 //$PAGE->secondarynav->make_active();
 
 
-//print_r("---- ");
-//print_r($PAGE->secondarynav->get_tabs_array());
+print_r("---- ");
+print_r($PAGE->secondarynav->action_link_actions());
+print_r("----2 ");
+print_r($PAGE->secondarynav->get_children_key_list());
+print_r("----3 ");
+print_r($PAGE->secondarynav->get_siblings());
+print_r("----4 ");
+print_r($PAGE->secondarynav->activenode);
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
