@@ -141,8 +141,8 @@ switch($view) {
 // Print title and header
 //$PAGE->set_pagelayout('standard');
 
-$PAGE->set_secondary_navigation(true);
-$PAGE->set_pagelayout('course');
+//$PAGE->set_secondary_navigation(true);
+//$PAGE->set_pagelayout('course');
 
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 
@@ -157,8 +157,6 @@ echo $OUTPUT->header();
 echo $renderer->start_layout();
 echo html_writer::start_tag('div', ['class' => 'heightcontainer', 'data-calendar-type' => 'main-block']);
 
-
-
 list($data, $template) = calendar_get_view($calendar, $view, true, false, $lookahead);
 echo $renderer->render_from_template($template, $data);
 
@@ -169,3 +167,16 @@ echo $renderer->render_from_template($template, $data);
 
 echo $renderer->complete_layout();
 echo $OUTPUT->footer();
+
+echo "<script>
+    var menus = document.getElementsByClassName('nav-link');
+    var miElemento = null;
+    
+    for (var i = 0; i < menus.length; i++) {
+      if (menus[i].ariaLabel == 'Calendario') {
+          miElemento = menus[i];
+          miElemento.classList.add('active')
+          break;
+      }
+    }
+</script>";
