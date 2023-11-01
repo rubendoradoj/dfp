@@ -139,7 +139,11 @@ switch($view) {
 }
 
 // Print title and header
-$PAGE->set_pagelayout('standard');
+//$PAGE->set_pagelayout('standard');
+
+$PAGE->set_secondary_navigation(true);
+$PAGE->set_pagelayout('course');
+
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 
 $headingstr = get_string('calendar', 'core_calendar');
