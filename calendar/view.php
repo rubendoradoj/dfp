@@ -173,6 +173,7 @@ echo "<script>
     var miElemento = null;
     
     for (var i = 0; i < menus.length; i++) {
+        menus[i].classList.remove('active')
       if (menus[i].ariaLabel == 'Calendario') {
           miElemento = menus[i];
           miElemento.classList.add('active')
