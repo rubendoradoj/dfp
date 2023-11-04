@@ -320,23 +320,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                 ) parent
                 GROUP BY quizattemptid, quiz
                 having quizattemptid = " . $attemptobj->get_attempt()->id);
-            
-            $flags = $DB->get_record_sql("
-                SELECT 
-                    COUNT(qa.questionid) AS cantidad, 
-                    qas.state, 
-                    quiza.quiz, 
-                    quiza.id AS quizattemptid, 
-                    quiza.userid, 
-                    qa.flagged AS flag
-                FROM mdl_quiz_attempts AS quiza
-                JOIN mdl_question_usages AS qu ON qu.id = quiza.uniqueid
-                JOIN mdl_question_attempts AS qa ON qa.questionusageid = qu.id
-                JOIN mdl_question_attempt_steps AS qas ON qas.questionattemptid = qa.id
-                LEFT JOIN mdl_question_attempt_step_data AS qasd ON qasd.attemptstepid = qas.id
-                WHERE qas.state IN ('gradedright') && flagged = 1
-                GROUP BY quiza.id, quiza.quiz, qas.state, quiza.userid
-                having quizattemptid = " . $attemptobj->get_attempt()->id);
+
 
             $row[] = $estadisticas->aciertos;
             $row[] = $estadisticas->fallos;
@@ -353,7 +337,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             }
 
             // Ouside the if because we may be showing feedback but not grades.
-            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags->cantidad, $quiz, false);
+            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
 
             if ($viewobj->gradecolumn) {
                 if (
