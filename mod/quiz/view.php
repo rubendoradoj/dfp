@@ -142,6 +142,8 @@ if (html_is_blank($quiz->intro)) {
 $PAGE->add_body_class('limitedwidth');
 /** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
+$PAGE->set_secondary_navigation(true);
+$PAGE->set_pagelayout('course');
 
 // Print table with existing attempts.
 if ($attempts) {
