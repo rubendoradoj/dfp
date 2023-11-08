@@ -139,6 +139,7 @@ $title = $course->shortname . ': ' . format_string($quiz->name);
 
 require_login($course);
 $contextCourse = context_course::instance($course->id);
+$PAGE->set_context($contextCourse);
 $PAGE->navbar->add('Mi Quiz');
 
 $PAGE->set_title($title);
