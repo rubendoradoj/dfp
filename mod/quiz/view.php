@@ -244,7 +244,7 @@ $viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
         course_get_format($course)->has_view_page());
 
 echo $OUTPUT->header();
-
+echo $OUTPUT->navbar();
 if (!empty($gradinginfo->errors)) {
     foreach ($gradinginfo->errors as $error) {
         $errortext = new \core\output\notification($error, \core\output\notification::NOTIFY_ERROR);
