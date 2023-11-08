@@ -1272,6 +1272,27 @@ class renderer extends plugin_renderer_base {
         }
     }
 
+    //Regresa solo la fecha del Attempt
+    public function attempt_state_date($attemptobj) {
+        switch ($attemptobj->get_state()) {
+            case quiz_attempt::IN_PROGRESS:
+                return get_string('stateinprogress', 'quiz');
+
+            case quiz_attempt::OVERDUE:
+                return userdate($attemptobj->get_due_date());
+
+
+            case quiz_attempt::FINISHED:
+                return userdate($attemptobj->get_submitted_date());
+
+            case quiz_attempt::ABANDONED:
+                return get_string('stateabandoned', 'quiz');
+
+            default:
+                throw new coding_exception('Unexpected attempt state');
+        }
+    }
+
     /**
      * Generates data pertaining to quiz results
      *

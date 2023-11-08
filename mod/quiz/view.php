@@ -140,11 +140,9 @@ $title = $course->shortname . ': ' . format_string($quiz->name);
 require_login($course);
 $contextCourse = context_course::instance($course->id);
 $PAGE->set_context($contextCourse);
-//$PAGE->navbar->add('Mi Quiz');
 
 $PAGE->set_title($title);
-$PAGE->set_heading(format_string($course->fullname, true, array('context' => $contextCourse)), true);
-//$PAGE->set_heading($course->fullname, true, array('context' => $context), true);
+$PAGE->set_heading($course->fullname);
 if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
@@ -254,9 +252,6 @@ $viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
         course_get_format($course)->has_view_page());
 
 echo $OUTPUT->header();
-/*$PAGE->requires->template->context = context_system::instance();
-$PAGE->requires->template->get_renderer('core', 'core_navigation');
-echo $OUTPUT->navbar();*/
 if (!empty($gradinginfo->errors)) {
     foreach ($gradinginfo->errors as $error) {
         $errortext = new \core\output\notification($error, \core\output\notification::NOTIFY_ERROR);

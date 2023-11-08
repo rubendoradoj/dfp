@@ -256,18 +256,6 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             $table->head[] = get_string('attemptnumber', 'quiz');
             $table->size[] = '';
         }
-        $table->head[] = get_string('attemptstate', 'quiz');
-        $table->align[] = 'left';
-        $table->size[] = '';
-
-        $table->head[] = 'Aciertos';
-        $table->head[] = 'Fallos';
-        $table->head[] = 'Sin responder';
-        if ($viewobj->markcolumn and false) {
-            $table->head[] = get_string('marks', 'quiz') . ' / ' .
-                quiz_format_grade($quiz, $quiz->sumgrades);
-            $table->size[] = '';
-        }
         if ($viewobj->gradecolumn) {
             $table->head[] = get_string('grade', 'quiz') . ' / ' .
                 quiz_format_grade($quiz, $quiz->grade);
@@ -275,6 +263,23 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
         }
         if ($viewobj->canreviewmine) {
             $table->head[] = get_string('review', 'quiz');
+            $table->size[] = '';
+        }
+
+
+
+        $table->head[] = 'Aciertos';
+        $table->head[] = 'Fallos';
+        $table->head[] = 'Sin responder';
+        $table->head[] = 'Fecha';
+
+        $table->head[] = get_string('attemptstate', 'quiz');
+        $table->align[] = 'left';
+        $table->size[] = '';
+
+        if ($viewobj->markcolumn and false) {
+            $table->head[] = get_string('marks', 'quiz') . ' / ' .
+                quiz_format_grade($quiz, $quiz->sumgrades);
             $table->size[] = '';
         }
         if ($viewobj->feedbackcolumn) {
@@ -296,8 +301,45 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                     $row[] = $attemptobj->get_attempt_number();
                 }
             }
+            //Intento, Calificación, Revisión, Aciertos, Fallos, Sin responder, Fecha, Estado
 
-            $row[] = $this->attempt_state($attemptobj);
+
+            // Ouside the if because we may be showing feedback but not grades.
+            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags->cantidad, $quiz, false);
+
+            if ($viewobj->gradecolumn) {
+                if (
+                    $attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
+                    $attemptobj->is_finished()
+                ) {
+
+                    // Highlight the highest grade if appropriate.
+                    if (
+                        $viewobj->overallstats && !$attemptobj->is_preview()
+                        && $viewobj->numattempts > 1 && !is_null($viewobj->mygrade)
+                        && $attemptobj->get_state() == quiz_attempt::FINISHED
+                        && $attemptgrade == $viewobj->mygrade
+                        && $quiz->grademethod == QUIZ_GRADEHIGHEST
+                    ) {
+                        $table->rowclasses[$attemptobj->get_attempt_number()] = 'bestrow';
+                    }
+
+                    $row[] = quiz_format_grade($quiz, $attemptgrade);
+                } else {
+                    $row[] = '';
+                }
+            }
+
+            //REVISION
+            if ($viewobj->canreviewmine) {
+                $row[] = $viewobj->accessmanager->make_review_link(
+                    $attemptobj->get_attempt(),
+                    $attemptoptions,
+                    $this
+                );
+            }
+
+            //ACIERTOS, FALLAS, SIN RESPONDER
 
             global $DB;
 
@@ -342,6 +384,13 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             $row[] = $estadisticas->aciertos;
             $row[] = $estadisticas->fallos;
             $row[] = $estadisticas->pendientes;
+
+            //FECHA
+            $row[] = $this->attempt_state_date($attemptobj);
+
+            //ESTADO
+            $row[] = $this->attempt_state($attemptobj);
+
             if ($viewobj->markcolumn and false) {
                 if (
                     $attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
@@ -353,39 +402,6 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                 }
             }
 
-            // Ouside the if because we may be showing feedback but not grades.
-            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags->cantidad, $quiz, false);
-
-            if ($viewobj->gradecolumn) {
-                if (
-                    $attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
-                    $attemptobj->is_finished()
-                ) {
-
-                    // Highlight the highest grade if appropriate.
-                    if (
-                        $viewobj->overallstats && !$attemptobj->is_preview()
-                        && $viewobj->numattempts > 1 && !is_null($viewobj->mygrade)
-                        && $attemptobj->get_state() == quiz_attempt::FINISHED
-                        && $attemptgrade == $viewobj->mygrade
-                        && $quiz->grademethod == QUIZ_GRADEHIGHEST
-                    ) {
-                        $table->rowclasses[$attemptobj->get_attempt_number()] = 'bestrow';
-                    }
-
-                    $row[] = quiz_format_grade($quiz, $attemptgrade);
-                } else {
-                    $row[] = '';
-                }
-            }
-
-            if ($viewobj->canreviewmine) {
-                $row[] = $viewobj->accessmanager->make_review_link(
-                    $attemptobj->get_attempt(),
-                    $attemptoptions,
-                    $this
-                );
-            }
 
             if ($viewobj->feedbackcolumn && $attemptobj->is_finished()) {
                 if ($attemptoptions->overallfeedback) {
