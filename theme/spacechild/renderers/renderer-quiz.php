@@ -389,7 +389,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             $row[] = $this->attempt_state_date($attemptobj);
 
             //ESTADO
-            $row[] = $this->attempt_state($attemptobj);
+            $row[] = $this->attempt_state_without_date($attemptobj);
 
             if ($viewobj->markcolumn and false) {
                 if (

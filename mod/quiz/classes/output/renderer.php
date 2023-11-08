@@ -1271,6 +1271,25 @@ class renderer extends plugin_renderer_base {
                 throw new coding_exception('Unexpected attempt state');
         }
     }
+    //Regresa solo la descripcion del estado del Attempt
+    public function attempt_state_without_date($attemptobj) {
+        switch ($attemptobj->get_state()) {
+            case quiz_attempt::IN_PROGRESS:
+                return get_string('stateinprogress', 'quiz');
+
+            case quiz_attempt::OVERDUE:
+                return get_string('stateoverdue', 'quiz');
+
+            case quiz_attempt::FINISHED:
+                return get_string('statefinished', 'quiz');
+
+            case quiz_attempt::ABANDONED:
+                return get_string('stateabandoned', 'quiz');
+
+            default:
+                throw new coding_exception('Unexpected attempt state');
+        }
+    }
 
     //Regresa solo la fecha del Attempt
     public function attempt_state_date($attemptobj) {
