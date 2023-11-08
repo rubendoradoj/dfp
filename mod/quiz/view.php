@@ -134,8 +134,11 @@ if (!empty($gradinginfo->items)) {
 }
 
 $title = $course->shortname . ': ' . format_string($quiz->name);
+
+$context = context_course::instance($course->id);
+
 $PAGE->set_title($title);
-$PAGE->set_heading($course->fullname);
+$PAGE->set_heading($course->fullname, true, array('context' => $context), true);
 if (html_is_blank($quiz->intro)) {
     $PAGE->activityheader->set_description('');
 }
