@@ -135,7 +135,9 @@ if (!empty($gradinginfo->items)) {
 
 $title = $course->shortname . ': ' . format_string($quiz->name);
 
+require_login($course);
 $contextCourse = context_course::instance($course->id);
+$PAGE->navbar->add('Mi Quiz');
 
 $PAGE->set_title($title);
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $contextCourse)), true);
@@ -145,7 +147,7 @@ if (html_is_blank($quiz->intro)) {
 }
 $PAGE->add_body_class('limitedwidth');
 /** @var renderer $output */
-$output = $PAGE->get_renderer('mod_quiz');
+//$output = $PAGE->get_renderer('mod_quiz');
 $PAGE->set_secondary_navigation(true);
 $PAGE->set_pagelayout('course');
 
