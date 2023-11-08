@@ -30,6 +30,8 @@ use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot.'/notes/lib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -147,9 +149,10 @@ if (html_is_blank($quiz->intro)) {
 }
 $PAGE->add_body_class('limitedwidth');
 /** @var renderer $output */
-//$output = $PAGE->get_renderer('mod_quiz');
 $PAGE->set_secondary_navigation(true);
 $PAGE->set_pagelayout('course');
+
+$output = $PAGE->get_renderer('mod_quiz');
 
 // Print table with existing attempts.
 if ($attempts) {
