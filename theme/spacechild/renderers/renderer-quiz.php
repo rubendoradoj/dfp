@@ -302,7 +302,24 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                 }
             }
             //Intento, Calificación, Revisión, Aciertos, Fallos, Sin responder, Fecha, Estado
+            global $DB;
 
+            $flags = $DB->get_record_sql("
+                SELECT 
+                    COUNT(qa.questionid) AS cantidad, 
+                    qas.state, 
+                    quiza.quiz, 
+                    quiza.id AS quizattemptid, 
+                    quiza.userid, 
+                    qa.flagged AS flag
+                FROM {quiz_attempts} quiza
+                JOIN {question_usages} qu ON qu.id = quiza.uniqueid
+                JOIN {question_attempts} qa ON qa.questionusageid = qu.id
+                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+                WHERE qas.state IN ('gradedright') && flagged = 1
+                GROUP BY quiza.id, quiza.quiz, qas.state, quiza.userid
+                having quizattemptid = " . $attemptobj->get_attempt()->id);
 
             // Ouside the if because we may be showing feedback but not grades.
             $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags->cantidad, $quiz, false);
@@ -341,8 +358,6 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
 
             //ACIERTOS, FALLAS, SIN RESPONDER
 
-            global $DB;
-
             $estadisticas = $DB->get_record_sql("SELECT quizattemptid, quiz, max(aciertos) aciertos, max(fallos) fallos, max(total) total, (max(total) - max(fallos) - max(aciertos)) AS pendientes  FROM
                 (
                     SELECT sub.quizattemptid, sub.quiz, if(sub.state = 'gradedright', sub.cantidad, 0) aciertos,
@@ -363,24 +378,6 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                 GROUP BY quizattemptid, quiz
                 having quizattemptid = " . $attemptobj->get_attempt()->id);
             
-            $flags = $DB->get_record_sql("
-                SELECT 
-                    COUNT(qa.questionid) AS cantidad, 
-                    qas.state, 
-                    quiza.quiz, 
-                    quiza.id AS quizattemptid, 
-                    quiza.userid, 
-                    qa.flagged AS flag
-                FROM {quiz_attempts} quiza
-                JOIN {question_usages} qu ON qu.id = quiza.uniqueid
-                JOIN {question_attempts} qa ON qa.questionusageid = qu.id
-                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-                LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
-                WHERE qas.state IN ('gradedright') && flagged = 1
-                GROUP BY quiza.id, quiza.quiz, qas.state, quiza.userid
-                having quizattemptid = " . $attemptobj->get_attempt()->id);
-
-
             $row[] = $estadisticas->aciertos;
             $row[] = $estadisticas->fallos;
             $row[] = $estadisticas->pendientes;
