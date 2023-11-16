@@ -325,6 +325,9 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             $row[] = $estadisticas->aciertos;
             $row[] = $estadisticas->fallos;
             $row[] = $estadisticas->pendientes;
+
+            $flags = \core_course\external\course_media::get_flags_by_correct_questions($attemptobj->get_attempt()->id);
+
             if ($viewobj->markcolumn and false) {
                 if (
                     $attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
@@ -337,7 +340,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             }
 
             // Ouside the if because we may be showing feedback but not grades.
-            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+            $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags, $quiz, false);
 
             if ($viewobj->gradecolumn) {
                 if (
