@@ -167,9 +167,9 @@ class course_media extends \core\external\exporter {
                             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
                             $nota_final = $quiz_new->sumgrades > 0 ? (intval($correctas->aciertos) - $flags_correct)  * $quiz_new->grade / $quiz_new->sumgrades : 0;
                             if($nota_final >= 5) {
-                                $sum_approved += $nota_final;
+                                $sum_approved += 1;
                             } else {
-                                $sum_suspended += $nota_final;
+                                $sum_suspended += 1;
                             }
                         }
                     }
