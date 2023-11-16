@@ -1,121 +1,200 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * misestadisticas report
- *
- * @package    report
- * @subpackage misestadisticas
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 use core\report_helper;
+use core_course\external\course_media;
 
-require('../../config.php');
+require_once('../../config.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
 require_once($CFG->dirroot.'/notes/lib.php');
-//require_once($CFG->dirroot.'/report/misestadisticas/locallib.php');
 
-$participantsperpage = intval(get_config('moodlecourse', 'participantsperpage'));
-define('DEFAULT_PAGE_SIZE', (!empty($participantsperpage) ? $participantsperpage : 20));
-define('SHOW_ALL_PAGE_SIZE', 5000);
+global $DB, $COURSE, $USER;
+$id = required_param('id', PARAM_INT); // course id.
 
-$id         = required_param('id', PARAM_INT); // course id.
-$texto     = optional_param('texto', '', PARAM_RAW);
-$roleid     = optional_param('roleid', 0, PARAM_INT); // which role to show
-$instanceid = optional_param('instanceid', 0, PARAM_INT); // instance we're looking at.
-$timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look...
-$action     = optional_param('action', '', PARAM_ALPHA);
-$page       = optional_param('page', 0, PARAM_INT);                     // which page to show
-$perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
-$currentgroup = optional_param('group', null, PARAM_INT); // Get the active group.
+$PAGE->set_pagelayout('course');
 
-$url = new moodle_url('/report/misestadisticas/index.php', array('id'=>$id));
-if ($roleid !== 0) $url->param('roleid');
-if ($instanceid !== 0) $url->param('instanceid');
-if ($timefrom !== 0) $url->param('timefrom');
-if ($action !== '') $url->param('action');
-if ($page !== 0) $url->param('page');
-if ($perpage !== DEFAULT_PAGE_SIZE) $url->param('perpage');
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
-
-if ($action != 'view' and $action != 'post') {
-    $action = ''; // default to all (don't restrict)
-}
+$PAGE->navbar->add('Mis Estadísticas');
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     throw new \moodle_exception('invalidcourse');
 }
 
-if ($roleid != 0 and !$role = $DB->get_record('role', array('id'=>$roleid))) {
-    throw new \moodle_exception('invalidrole');
-}
-
 require_login($course);
 $context = context_course::instance($course->id);
-//require_capability('report/participation:view', $context);
 
-$strmisestadisticas = get_string('misestadisticasreport');
-$strviews         = get_string('views');
-$strposts         = get_string('posts');
-$strreports       = get_string('reports');
-
-//$actionoptions = report_misestadisticas_get_action_options();
-//if (!array_key_exists($action, $actionoptions)) {
-    $action = '';
-//}
-
-$PAGE->set_title(format_string($course->shortname, true, array('context' => $context)) .': '. $strmisestadisticas);
-$PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)));
+$PAGE->set_title("Mis Estadísticas");
+$PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)), true);
 echo $OUTPUT->header();
 
-// Print the selector dropdown.
-//$pluginname = get_string('pluginname', 'report_misestadisticas');
-//report_helper::print_report_selector($pluginname);
+/* Inicio de graficos */
+$CFG->chart_colorset = ['#002db3', '#3357c2', '#8096d9', '#b3c0e8', '#ccd5f0'];
+$output = '';
 
-// Logs will not have been recorded before the course timecreated time.
-$minlog = $course->timecreated;
-$onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
+/*Cards de metricas */
 
-/*$logtable = report_misestadisticas_get_log_table_name(); // Log table to use for fetaching records.
+$output .= html_writer::start_div('metricas-styles');
 
-// If no log table, then use legacy records.
-if (empty($logtable)) {
-    $onlyuselegacyreader = true;
-}*/
+$output .= html_writer::start_div('cards-styles');
+/* Total de preguntas */
+$output .= html_writer::start_div('card-style');
 
-$modinfo = get_fast_modinfo($course);
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-question fa-4x card-style-icon']);
+$output .= html_writer::start_div('card-style-text');
+$questions_bank = \core_course\external\course_media::get_total_questions_bank($COURSE->id);
+$sum_total_questions = $questions_bank->aciertos + $questions_bank->fallos + $questions_bank->pendientes;
+$output .= html_writer::tag('h1', $sum_total_questions, array('class' => 'card-chart-number'));
+$output .= html_writer::tag('h1','Total de Preguntas', array('class' => 'card-chart-title'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
 
-// Print first controls.
-//report_misestadisticas_print_filter_form($course, $timefrom, $minlog, $action, $roleid, $instanceid);
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title'));
+$output .= html_writer::end_div('card-style-bottom');
 
-$baseurl = new moodle_url('/report/misestadisticas/index.php', array(
-    'id' => $course->id,
-    'roleid' => $roleid,
-    'instanceid' => $instanceid,
-    'timefrom' => $timefrom,
-    'action' => $action,
-    'perpage' => $perpage,
-    'group' => $currentgroup
-));
+$output .= html_writer::end_div('card-style');
 
-echo "<h1>" . $texto . "</h1>";
+/* Total de preguntas acertadas */
+$output .= html_writer::start_div('card-style success');
 
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-check fa-4x card-style-icon success-text']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', $questions_bank->aciertos > 0 ? $questions_bank->aciertos : 0, array('class' => 'card-chart-number success-text'));
+$output .= html_writer::tag('h1','Aciertos', array('class' => 'card-chart-title success-text'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
 
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon success-text']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title success-text'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+/* Total de preguntas falladas */
+$output .= html_writer::start_div('card-style danger');
+
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-times fa-4x card-style-icon danger-text']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', $questions_bank->fallos > 0 ? $questions_bank->fallos : 0, array('class' => 'card-chart-number danger-text'));
+$output .= html_writer::tag('h1','Fallos', array('class' => 'card-chart-title danger-text'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
+
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon danger-text']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title danger-text'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+/* Total de preguntas sin responder */
+$output .= html_writer::start_div('card-style pending');
+
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-refresh fa-4x card-style-icon pending-text']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', $questions_bank->pendientes > 0 ? $questions_bank->pendientes : 0, array('class' => 'card-chart-number pending-text'));
+$output .= html_writer::tag('h1','Sin responder', array('class' => 'card-chart-title pending-text'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
+
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon pending-text']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title pending-text'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+$output .= html_writer::end_div('cards-styles');
+
+/*Graficas */
+$output .= html_writer::start_div('chart-styles');
+
+/* Porcentaje de test acertadas, falladas y sin responder */
+$result_quiz = \core_course\external\course_media::get_total_questions_bank($COURSE->id);
+
+$total_preguntas = $result_quiz->aciertos + $result_quiz->fallos + $result_quiz->pendientes;
+$porcentaje_aciertos = $total_preguntas > 0 ? $result_quiz->aciertos * 100 / $total_preguntas: 0;
+$porcentaje_fallos = $total_preguntas > 0 ? $result_quiz->fallos * 100 / $total_preguntas : 0;
+$porcentaje_pendientes = $total_preguntas > 0 ? $result_quiz->pendientes * 100 / $total_preguntas : 0;
+
+$series_porcentajes = new \core\chart_series('Porcentaje', [round($porcentaje_aciertos), round($porcentaje_fallos), round($porcentaje_pendientes)]);
+$labels_porcentajes = ["Aciertos: ".round($porcentaje_aciertos, 2)." %", "Fallos: ".round($porcentaje_fallos,2)." %", "Sin responder: ".round($porcentaje_pendientes,2)." %"];
+
+$chart_porcent = new \core\chart_pie();
+$chart_porcent->add_series($series_porcentajes);
+$chart_porcent->set_labels($labels_porcentajes);
+$output .= html_writer::tag('div', $OUTPUT->render_chart($chart_porcent,false), ['dir' => 'ltr']);
+
+$output .= html_writer::end_div('chart-styles');
+
+$output .= html_writer::end_div('metricas-styles');
+/*Fin Primera Fila */
+
+/*Inicio Segunda Fila */
+$output .= html_writer::start_div('cards-styles');
+
+/* Total de test aprobadas, abandonadas */
+$all_test = \core_course\external\course_media::get_calification_by_test($USER->id);
+/* Total de test realizados */
+$output .= html_writer::start_div('card-style');
+
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-file fa-4x card-style-icon']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', count($all_test) > 0 ? round($all_test[0]) + round($all_test[1]) : 0, array('class' => 'card-chart-number'));
+$output .= html_writer::tag('h1','Total de Tests', array('class' => 'card-chart-title'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
+
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+/* Total de test aprobadas */
+$output .= html_writer::start_div('card-style');
+
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-check fa-4x card-style-icon']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', count($all_test) > 0 ? round($all_test[0]) : 0, array('class' => 'card-chart-number'));
+$output .= html_writer::tag('h1','Tests Aprobados', array('class' => 'card-chart-title'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
+
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+/* Total de test abandonadas */
+$output .= html_writer::start_div('card-style');
+
+$output .= html_writer::start_div('card-style-top');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-times fa-4x card-style-icon']);
+$output .= html_writer::start_div('card-style-text');
+$output .= html_writer::tag('h1', count($all_test) > 0 ? round($all_test[1]) : 0, array('class' => 'card-chart-number'));
+$output .= html_writer::tag('h1','Tests Suspendidos', array('class' => 'card-chart-title'));
+$output .= html_writer::end_div('card-style-text');
+$output .= html_writer::end_div('card-style-top');
+
+$output .= html_writer::start_div('card-style-bottom');
+$output .= html_writer::tag('i', '', ['class' => 'fa fa-bar-chart card-style-sub-icon']);
+$output .= html_writer::tag('p','por curso', array('class' => 'card-chart-sub-title'));
+$output .= html_writer::end_div('card-style-bottom');
+
+$output .= html_writer::end_div('card-style');
+
+$output .= html_writer::end_div('cards-styles');
+
+echo $output;
 
 echo $OUTPUT->footer();
