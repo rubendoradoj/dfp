@@ -119,3 +119,12 @@
         </div>
     {{/courses}}
 </div>
+{{#courses}}
+    {{#js}}
+        require(['jquery','theme_spacechild/medias-cards'], function($, module) {
+            $(document).ready(function ($) {
+                module.init({{#quote}}{{id}}{{/quote}});
+            });
+        });
+    {{/js}}
+{{/courses}}
