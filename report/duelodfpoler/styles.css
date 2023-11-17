@@ -1,0 +1,32 @@
+.contact-us{
+    max-width: 600px; 
+    margin: 0 auto; 
+    background-color: #fff; 
+    padding: 20px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    margin-top: 40px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.formulario-styles{
+    max-width: 560px;
+}
+.contact-title{
+    margin-top: 10px;
+    font-weight: 700;
+}
+.button{
+    background-color: #002db3; 
+    color: #fff; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 4px; 
+    cursor: pointer;
+    min-width: 100px;
+}
+.button:hover{
+    background-color: #001b6b;
+}
