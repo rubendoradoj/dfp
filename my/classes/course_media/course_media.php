@@ -15,7 +15,7 @@ require_once($CFG->dirroot . '/course/classes/external/course_media.php');
 if( isset($_GET['courseid']) ) {
     if($_GET['courseid']) {
         $id = intval($_GET['courseid']);
-        $media_by_user= \core_course\external\course_media::get_media_by_course($USER->id, $id);
+        $media_by_user= \core_course\external\course_media::get_media_by_course($id, $USER->id);
         $media_dfp = \core_course\external\course_media::get_media_dfpool_by_course($id);
         $jsondata['success'] = true;
         $jsondata['media'] = $media_by_user;

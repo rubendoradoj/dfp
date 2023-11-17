@@ -41,7 +41,11 @@ define(['jquery', 'core/log', 'core/fragment'], function ($, log, Fragment) {
              .done(function( data, textStatus, jqXHR ) {
                  if ( console && console.log ) {
                     container.html(`Mi media: ${data.media} VS Media DFPOL: ${data.media_dfp}`);
-                    container.addClass("badge-success");
+                    if(data.media >= 5){
+                        container.addClass("badge-success");
+                    }else{
+                        container.addClass("badge-danger");
+                    }
                  }
              })
              .fail(function( jqXHR, textStatus, errorThrown ) {
