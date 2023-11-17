@@ -380,7 +380,7 @@ class core_renderer extends \core_renderer {
      *
      */
     protected function course_summary($courseid = 0, $content = '') {
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $USER;
         $output = '';
 
         require_once($CFG->libdir . '/filelib.php');
