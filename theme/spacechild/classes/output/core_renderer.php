@@ -390,9 +390,12 @@ class core_renderer extends \core_renderer {
         $context = context_course::instance($iscourseid);
         $desc = file_rewrite_pluginfile_urls($iscontent, 'pluginfile.php', $context->id, 'course', 'summary', null);
 
+        $media_by_course = \core_course\external\course_media::get_media_by_course($iscourseid, $USER->id);
+        $media_DFPol_by_course = \core_course\external\course_media::get_media_dfpool_by_course($COURSE->id);
+
         $output .= html_writer::start_div('badge-sm badge-success my-1 mr-1');
-        $output .= "Media 00 vs Media DFPOL 00";//format_text($desc, FORMAT_HTML);
-        //$output .= format_text($desc, FORMAT_HTML);
+        $output .= "Mi media: ".$media_by_course." VS Media DFPOL: ".$media_DFPol_by_course;
+
         $output .= html_writer::end_div();
 
         return $output;

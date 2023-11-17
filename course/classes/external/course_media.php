@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\quiz_settings;
 require_once($CFG->dirroot . '/course/lib.php');
-
+require_once($CFG->dirroot . '/config.php');
 /**
  * Class for exporting a course module summary from a cm_info class.
  *
@@ -41,13 +41,18 @@ class course_media extends \core\external\exporter {
      * @return number
      */
     public static function get_media_by_course($courseId, $userId) {
-        global $DB, $COURSE; /*cambio nuevo -----*/
+        global $DB, $USER;
 
-        $sum_medias_by_quiz = 0; /*cambio nuevo -----*/
+        $sum_medias_by_quiz = 0;
+
+        $course = $DB->get_record_sql("
+                SELECT *
+                FROM {course} c
+                WHERE c.id = " . $courseId);
 
         /*Calculo de Media por alumno en cada curso */
         $all_attempts = array();
-        $activities = \course_modinfo::get_array_of_activities($COURSE); /*cambio nuevo -----*/
+        $activities = \course_modinfo::get_array_of_activities($course);
         foreach($activities as $key1 => $value1){
             if(is_object($value1)){
                 if($value1->visible==true){
