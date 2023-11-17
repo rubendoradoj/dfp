@@ -124,7 +124,7 @@ class course_media extends \core\external\exporter {
     public static function get_media_by_quiz($userId, $quizId, $quiz) {
         global $DB;
 
-        $sum_total = 0; /*cambio nuevo -----*/
+        $sum_total = 0;
 
         $quizes_attempts = $DB->get_records_sql("
                 SELECT *
