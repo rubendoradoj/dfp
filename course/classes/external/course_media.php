@@ -45,6 +45,7 @@ class course_media extends \core\external\exporter {
 
         $sum_medias_by_quiz = 0;
         $count_quiz = 0;
+        $data_grades = [];
 
         $course = $DB->get_record_sql("
                 SELECT *
@@ -59,11 +60,12 @@ class course_media extends \core\external\exporter {
                 if($value1->visible==true){
                     if ($value1->mod == 'quiz'){
                         $quizobj_new = quiz_settings::create($value1->id);
-                        $quiz_new = $quizobj_new->get_quiz(); 
-                        $count_quiz += 1;                       
-
+                        $quiz_new = $quizobj_new->get_quiz();
+                        $data_grades = \core_course\external\course_media::get_sum_grades_by_quiz($userId, $quiz_new->id, $quiz_new); 
+                                              
                         //Obtener sumatoria de medias en el curso
-                        $sum_medias_by_quiz += \core_course\external\course_media::get_media_by_quiz($userId, $quiz_new->id, $quiz_new);
+                        $sum_medias_by_quiz += $data_grades[0];
+                        $count_quiz += $data_grades[1]; 
                     }
                 }
             }
@@ -163,6 +165,33 @@ class course_media extends \core\external\exporter {
         $media_by_quiz = count($quizes_attempts) > 0 ? $sum_total / count($quizes_attempts) : 0;
 
         return $media_by_quiz;
+    }
+
+    /**
+     * Get sum grades and count by quiz.
+     *
+     * @return array
+     */
+    public static function get_sum_grades_by_quiz($userId, $quizId, $quiz) {
+        global $DB;
+
+        $sum_total = 0;
+        $count = 0;
+
+        $quizes_attempts = $DB->get_records_sql("
+                SELECT *
+                FROM {quiz_attempts} qa
+                WHERE qa.quiz = ".$quizId." AND qa.userid = ".$userId."");
+
+        foreach ($quizes_attempts as $attempt) {
+            $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
+            $flags_correct = self::get_flags_by_correct_questions($attempt->id);
+            $nota_final = $quiz->sumgrades > 0 ? (intval($correctas->aciertos) - $flags_correct)  * $quiz->grade / $quiz->sumgrades : 0;
+            $sum_total += $nota_final;
+            $count += 1;
+        }
+
+        return [$sum_total, $count];
     }
 
     /**

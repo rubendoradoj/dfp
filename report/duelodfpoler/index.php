@@ -95,16 +95,16 @@ $attributes_input_button = [
 
 $output .= html_writer::start_div('formulario-styles');
 
-$output .= html_writer::tag('label', 'Tu nombre(obligatorio)', ['class' => 'contact-title', 'for' => 'name']);
+$output .= html_writer::tag('label', 'Tu nombre', ['class' => 'contact-title', 'for' => 'name']);
 $output .= html_writer::empty_tag('input', $attributes_input_nombre);
 
-$output .= html_writer::tag('label', 'Correo electrónico(obligatorio)', ['class' => 'contact-title', 'for' => 'email']);
+$output .= html_writer::tag('label', 'Correo electrónico', ['class' => 'contact-title', 'for' => 'email']);
 $output .= html_writer::empty_tag('input', $attributes_input_email);
 
-$output .= html_writer::tag('label', 'Asunto(obligatorio)', ['class' => 'contact-title', 'for' => 'subject']);
+$output .= html_writer::tag('label', 'Tema al que pertenece', ['class' => 'contact-title', 'for' => 'subject']);
 $output .= html_writer::empty_tag('input', $attributes_input_asunto);
 
-$output .= html_writer::tag('label', 'Mensaje(obligatorio)', ['class' => 'contact-title', 'for' => 'message']);
+$output .= html_writer::tag('label', 'Enunciado y opciones de respuesta', ['class' => 'contact-title', 'for' => 'message']);
 $output .= html_writer::tag('textarea', '', $attributes_input_mensaje);
 
 $output .= html_writer::empty_tag('input', ['id'=>'sesskey', 'name'=>"sesskey", 'type'=>"hidden", 'value'=>""]);
