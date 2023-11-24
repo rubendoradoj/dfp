@@ -44,6 +44,7 @@ class course_media extends \core\external\exporter {
         global $DB, $USER;
 
         $sum_medias_by_quiz = 0;
+        $count_quiz = 0;
 
         $course = $DB->get_record_sql("
                 SELECT *
@@ -58,7 +59,8 @@ class course_media extends \core\external\exporter {
                 if($value1->visible==true){
                     if ($value1->mod == 'quiz'){
                         $quizobj_new = quiz_settings::create($value1->id);
-                        $quiz_new = $quizobj_new->get_quiz();                        
+                        $quiz_new = $quizobj_new->get_quiz(); 
+                        $count_quiz += 1;                       
 
                         //Obtener sumatoria de medias en el curso
                         $sum_medias_by_quiz += \core_course\external\course_media::get_media_by_quiz($userId, $quiz_new->id, $quiz_new);
@@ -67,7 +69,7 @@ class course_media extends \core\external\exporter {
             }
         }
 
-        $media_by_course = count($activities) > 0 ? $sum_medias_by_quiz/count($activities) : 0;
+        $media_by_course = $count_quiz > 0 ? $sum_medias_by_quiz/$count_quiz : 0;
 
         return round($media_by_course, 2);
     }
@@ -114,6 +116,26 @@ class course_media extends \core\external\exporter {
                 having quiza.id = ' . $attemptId);
         
         if(isset($flags->cantidades)) return $flags->cantidades; /*cambio nuevo -----*/
+    }
+
+    /**
+     * Get the number of flags in wrong questions.
+     *
+     * @return number
+     */
+    public static function get_flags_by_wrong_questions($attemptId) {
+        global $DB;
+        $flags = (object)$DB->get_record_sql('SELECT COUNT(qa.questionid) AS cantidades
+                FROM {quiz_attempts} quiza
+                JOIN {question_usages} qu ON qu.id = quiza.uniqueid
+                JOIN {question_attempts} qa ON qa.questionusageid = qu.id
+                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+                WHERE qas.state IN ("gradedwrong") && flagged = 1
+                GROUP BY quiza.id, quiza.quiz, qas.state, quiza.userid
+                having quiza.id = ' . $attemptId);
+        
+        if(isset($flags->cantidades)) return $flags->cantidades;
     }
 
     /**

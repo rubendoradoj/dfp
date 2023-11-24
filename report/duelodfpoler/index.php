@@ -23,6 +23,19 @@ $PAGE->set_title("Duelo DFPoler");
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)), true);
 echo $OUTPUT->header();
 
+$output_head = html_writer::tag('h3', 'Envia tus preguntas', ['class' => 'contact-head-title']);
+
+$output_head .= html_writer::tag('p', 'Recuerda que debes enviar el enunciado y 
+                    las opciones de respuesta junto con la explicación 
+                    retroalimentada de la respuesta correcta.
+                    Cuando recibamos tu pregunta la revisaremos
+                    y en el plazo de 5 días procederemos a subirla
+                    al banco de preguntas de "Duelo DFPOLER" para que
+                    el resto de alumnos pueda realizarla'
+                    , ['class' => 'contact-summary']);
+
+echo $output_head;
+
 $output = '';
 
 $attributes_form = [
@@ -95,6 +108,7 @@ $output .= html_writer::tag('label', 'Mensaje(obligatorio)', ['class' => 'contac
 $output .= html_writer::tag('textarea', '', $attributes_input_mensaje);
 
 $output .= html_writer::empty_tag('input', ['id'=>'sesskey', 'name'=>"sesskey", 'type'=>"hidden", 'value'=>""]);
+$output .= html_writer::empty_tag('input', ['id'=>'recipient', 'name'=>"recipient", 'type'=>"hidden", 'value'=>"dfpoler"]);
 
 $output .= html_writer::end_div('formulario-styles');
 
