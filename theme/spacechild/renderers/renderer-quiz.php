@@ -321,12 +321,12 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                 GROUP BY quizattemptid, quiz
                 having quizattemptid = " . $attemptobj->get_attempt()->id);
 
-
-            $row[] = $estadisticas->aciertos;
-            $row[] = $estadisticas->fallos;
-            $row[] = $estadisticas->pendientes;
-
             $flags = \core_course\external\course_media::get_flags_by_correct_questions($attemptobj->get_attempt()->id);
+            $flags_wrong = \core_course\external\course_media::get_flags_by_wrong_questions($attemptobj->get_attempt()->id);
+
+            $row[] = $estadisticas->aciertos - $flags;
+            $row[] = $estadisticas->fallos - $flags_wrong;
+            $row[] = $quiz->sumgrades - ($estadisticas->aciertos - $flags) - ($estadisticas->fallos - $flags_wrong);
 
             if ($viewobj->markcolumn and false) {
                 if (

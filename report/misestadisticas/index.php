@@ -41,7 +41,7 @@ $output .= html_writer::start_div('card-style-top');
 $output .= html_writer::tag('i', '', ['class' => 'fa fa-question fa-4x card-style-icon']);
 $output .= html_writer::start_div('card-style-text');
 $questions_bank = \core_course\external\course_media::get_total_questions_bank($COURSE->id);
-$sum_total_questions = $questions_bank->aciertos + $questions_bank->fallos;
+$sum_total_questions = $questions_bank->aciertos + $questions_bank->fallos + $questions_bank->pendientes;
 $output .= html_writer::tag('h1', $sum_total_questions, array('class' => 'card-chart-number'));
 $output .= html_writer::tag('h1','Total de preguntas respondidas', array('class' => 'card-chart-title'));
 $output .= html_writer::end_div('card-style-text');

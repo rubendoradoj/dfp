@@ -14,6 +14,12 @@
 .formulario-styles{
     max-width: 560px;
 }
+.contact-head-title{
+    margin-top: 30px;
+}
+.contact-summary{
+    margin-top: 10px;
+}
 .contact-title{
     margin-top: 10px;
     font-weight: 700;
