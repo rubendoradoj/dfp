@@ -340,7 +340,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             }
 
             // Ouside the if because we may be showing feedback but not grades.
-            $calculo_nota_real = (($estadisticas->aciertos - $flags) - ($estadisticas->fallos / 2)) * $quiz->grade / $quiz->sumgrades;
+            $calculo_nota_real = (($estadisticas->aciertos - $flags) - (($estadisticas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades;
             $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags, $quiz, false);
 
             if ($viewobj->gradecolumn) {
