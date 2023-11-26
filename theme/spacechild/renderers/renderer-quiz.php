@@ -340,6 +340,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
             }
 
             // Ouside the if because we may be showing feedback but not grades.
+            $calculo_nota_real = (($estadisticas->aciertos - $flags) - ($estadisticas->fallos / 2)) * $quiz->grade / $quiz->sumgrades;
             $attemptgrade = quiz_rescale_grade($attemptobj->get_sum_marks() - $flags, $quiz, false);
 
             if ($viewobj->gradecolumn) {
@@ -359,7 +360,7 @@ class theme_spacechild_mod_quiz_renderer extends mod_quiz\output\renderer {
                         $table->rowclasses[$attemptobj->get_attempt_number()] = 'bestrow';
                     }
 
-                    $row[] = quiz_format_grade($quiz, $attemptgrade);
+                    $row[] = quiz_format_grade($quiz, $calculo_nota_real);
                 } else {
                     $row[] = '';
                 }
