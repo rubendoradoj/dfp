@@ -185,13 +185,8 @@ echo $output->review_page($attemptobj, $slots, $page, $showall, $lastpage, $opti
 $attemptobj->fire_attempt_reviewed_event();
 
 $contentNav = $navbc->content;
-// NOTA ARRIESGANDO
-$quantityIncorrectRisk = substr_count( $contentNav, 'incorrect' );
-$quantityNotAnsweredRisk = substr_count( $contentNav, 'notanswered' );
-$quantityMark = substr_count( $contentNav, 'flagged' );
-$quantityCorrectRisk = substr_count( $contentNav, ' correct ' );
 $totalQuantity = substr_count( $contentNav, 'quiznavbutton');
-$finalScoreRisk = number_format( ($quantityCorrectRisk/$totalQuantity)*10, 2, '.', '' );
+$quantityMark = substr_count( $contentNav, 'flagged' );
 
 $pattern = "/\"(qnbutton)(.*?)\"/i";
 preg_match_all($pattern, $contentNav, $resultVal, PREG_OFFSET_CAPTURE);
@@ -205,7 +200,17 @@ foreach ($resultVal[2] as &$valor) {
     }
 }
 $quantityNotAnsweredReal += $quantityMark;
-$finalScoreReal = number_format( ($quantityCorrectReal/$totalQuantity)*10, 2, '.', '' );
+
+$calculo_real = ($quantityCorrectReal - ($quantityIncorrectReal / 2)) * 10 / $totalQuantity;
+$finalScoreReal = number_format($calculo_real, 2, '.', '' );
+
+// NOTA ARRIESGANDO
+$quantityIncorrectRisk = substr_count( $contentNav, 'incorrect' );
+$quantityNotAnsweredRisk = substr_count( $contentNav, 'notanswered' );
+$quantityCorrectRisk = substr_count( $contentNav, ' correct ' );
+
+$calculo_riesgo = ($quantityCorrectRisk - ($quantityIncorrectRisk / 2)) * 10 / $totalQuantity;
+$finalScoreRisk = number_format($calculo_riesgo, 2, '.', '' );
 
 echo '
 <script>

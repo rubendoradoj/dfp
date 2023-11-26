@@ -83,7 +83,8 @@ class course_media extends \core\external\exporter {
      */
     public static function get_media_dfpool_by_course($courseId) {
         global $DB;
-        $media_by_student = 0; /*cambio nuevo -----*/
+        $media_by_student = 0;
+        $media_by_course = 0;
 
         /*Calculo de Media opr alumno en cada curso */
         $users = $DB->get_records_sql("
@@ -94,8 +95,10 @@ class course_media extends \core\external\exporter {
                 WHERE en.courseid = " . $courseId);
 
         foreach ($users as $user) {
-            $media_by_student += self::get_media_by_course($courseId, $user->userid);;
+            $media_by_course += self::get_media_by_course($courseId, $user->userid);
         }
+
+        $media_by_student = count($users) > 0 ? $media_by_course / count($users) : 0;
 
         return round($media_by_student, 2);
     }
@@ -186,6 +189,7 @@ class course_media extends \core\external\exporter {
         foreach ($quizes_attempts as $attempt) {
             $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
+            $flags_wrong = self::get_flags_by_wrong_questions($attempt->id);
             $nota_final = $quiz->sumgrades > 0 ? (intval($correctas->aciertos) - $flags_correct)  * $quiz->grade / $quiz->sumgrades : 0;
             $sum_total += $nota_final;
             $count += 1;
