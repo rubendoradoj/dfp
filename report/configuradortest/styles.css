@@ -1,26 +1,48 @@
 .container-generador{
     display: flex;
     gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    align-items: center;
+    /*flex-wrap: wrap;*/
+    justify-content: center;
+}
+
+.container-generador h3{
+    text-align: center;
+    border-bottom: 1px solid #e2e2e2;
+    width: 100%;
 }
 
 .container-options,
 .container-all-checks{
     display: flex;
     flex-direction: column;
+    /*border: 1px solid red;*/
     padding: 10px;
-    border-radius: 8px;
+    align-items: center;
+    border-right: 1px solid #e2e2e2;
 }
 
+.container-options,
 .container-all-checks{
-    width: 50%;
+    width: 45%;
 }
 
 .container-checks{
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+    justify-content: center;
+}
+
+.container-options .dificultad,
+.container-options .tipo-pregunta,
+.container-options .cantidad,
+.container-options .duracion{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    justify-content: center;
+    width: 100%;
 }
 
 .container-options .dificultad .btn-check,
