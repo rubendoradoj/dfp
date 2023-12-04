@@ -1,0 +1,72 @@
+.container-generador{
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.container-options,
+.container-all-checks{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.container-all-checks{
+    width: 50%;
+}
+
+.container-checks{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.container-options .dificultad .btn-check,
+.container-options .tipo-pregunta .btn-check,
+.container-options .cantidad .btn-check,
+.container-options .duracion .btn-check,
+.container-all-checks .container-checks .btn-check{
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+.btn-theme{
+    background-color: #e6eaf7 !important;
+    color: #002db3 !important;
+}
+
+.btn-theme:hover{
+    opacity: 0.8;
+}
+
+input[type="checkbox"]:checked+label{
+    background-color: #002db3 !important;
+    color: #e6eaf7 !important;
+}
+
+.modal-design h2{
+    font-size: 20px;
+    line-height: 24px;
+}
+.modal-design h3{
+    font-size: 16px;
+    line-height: 24px;
+    color: #002db3;
+}
+.modal-design p{
+    font-size: 14px;
+    line-height: 20px;
+    color: #313131;
+    margin-bottom: 0.5rem !important;
+    display: flex;
+    justify-content: flex-end;
+}
+.modal-dialog {
+    max-width: 600px !important;
+}
+.close:hover {
+    background-color: #002db3 !important;
+}

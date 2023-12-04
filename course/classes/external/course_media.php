@@ -162,7 +162,7 @@ class course_media extends \core\external\exporter {
             $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
             $flags_wrong = self::get_flags_by_wrong_questions($attempt->id);
-            $nota_final = $quiz->sumgrades > 0 ? (($correctas->aciertos - $flags) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades : 0;
+            $nota_final = $quiz->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades : 0;
             $sum_total += $nota_final;
         }
 
@@ -191,7 +191,7 @@ class course_media extends \core\external\exporter {
             $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
             $flags_wrong = self::get_flags_by_wrong_questions($attempt->id);
-            $nota_final = $quiz->sumgrades > 0 ? (($correctas->aciertos - $flags) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades : 0;
+            $nota_final = $quiz->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades : 0;
             $sum_total += $nota_final;
             $count += 1;
         }
@@ -227,7 +227,7 @@ class course_media extends \core\external\exporter {
                             $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
                             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
                             $flags_wrong = self::get_flags_by_wrong_questions($attempt->id);
-                            $nota_final = $quiz->sumgrades > 0 ? (($correctas->aciertos - $flags) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz->grade / $quiz->sumgrades : 0;
+                            $nota_final = $quizobj_new->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * $quizobj_new->grade / $quizobj_new->sumgrades : 0;
                             if($nota_final >= 5) {
                                 $sum_approved += 1;
                             } else {
