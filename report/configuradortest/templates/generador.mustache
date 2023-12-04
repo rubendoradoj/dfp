@@ -1,0 +1,136 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_configuradortest/generador
+
+    This template renders the list view for the numbers theme case.
+
+    Example context (json):
+    {
+        "questions": [
+            {
+                "id": "2",
+                "question": "1"
+            }
+        ]
+    }
+}}
+<div class="container-generador">
+    <div class="container-all-checks">
+        <h3>Temas:</h3>
+        <div class="container-checks">
+            <input type="checkbox" name="check-tema" class="btn-check" id="btn-check-all" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-all">Todos</label>
+            {{#questions}}
+                <input type="checkbox" name="check-tema" class="btn-check" id="btn-check-{{question}}" autocomplete="off"/>
+                <label class="btn btn-primary btn-theme" for="btn-check-{{question}}">{{question}}</label>
+            {{/questions}}
+        </div>
+    </div>
+    <div class="container-options">
+        <div class="dificultad">
+            <h3>Dificultad:</h3>
+            <input type="checkbox" name="check-dif" class="btn-check" id="btn-check-todos" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-todos">Todos</label>
+
+            <input type="checkbox" name="check-dif" class="btn-check" id="btn-check-facil" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-facil">Facil</label>
+
+            <input type="checkbox" name="check-dif" class="btn-check" id="btn-check-medio" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-medio">Medio</label>
+
+            <input type="checkbox" name="check-dif" class="btn-check" id="btn-check-dificil" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-dificil">Dificil</label>
+        </div>
+
+        <div class="tipo-pregunta">
+            <h3>Tipo de preguntas:</h3>
+            <input type="checkbox" name="check-tipo" class="btn-check" id="btn-check-type-todos" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-type-todos">Todos</label>
+
+            <input type="checkbox" name="check-tipo" class="btn-check" id="btn-check-type-falladas" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-type-falladas">Falladas</label>
+
+            <input type="checkbox" name="check-tipo" class="btn-check" id="btn-check-type-sin-responder" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-type-sin-responder">Sin responder</label>
+
+            <input type="checkbox" name="check-tipo" class="btn-check" id="btn-check-type-riesgo" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-type-riesgo">Con riesgo</label>
+        </div>
+
+        <div class="cantidad">
+            <h3>Número de preguntas:</h3>
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c10" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c10">10</label>
+
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c20" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c20">20</label>
+
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c30" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c30">30</label>
+
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c50" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c50">50</label>
+
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c70" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c70">70</label>
+
+            <input type="checkbox" name="check-cant" class="btn-check" id="btn-check-c100" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-c100">100</label>
+        </div>
+
+        <div class="duracion">
+            <h3>Duración:</h3>
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-d10" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-d10">10</label>
+
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-d25" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-d25">25</label>
+
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-d40" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-d40">40</label>
+
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-d50" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-d50">50</label>
+
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-d70" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-d70">70</label>
+
+            <input type="checkbox" name="check-dur" class="btn-check" id="btn-check-dst" autocomplete="off"/>
+            <label class="btn btn-primary btn-theme" for="btn-check-dst">Sin tiempo</label>
+        </div>
+        
+    </div>
+    <button id="btn-generar" class="btn btn-primary">Generar test</button>
+</div>
+<div class="modal" id="modal"></div>
+{{#js}}
+require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
+    var trigger = $('#btn-generar');
+    var closemodal = $('#btn-closemodal');
+    ModalFactory.create({
+        title: '<div class="modal-design"><h2>Generador de Test Personalizado</h2></div>',
+        body: '<div class="modal-design"> <h3 style="color: #000000;">Has elegido examinarte de lo siguiente:</h2> <h3>Temas seleccionados:</h3> <p><strong>1, 2, 3, 4, 11, 15, 21</strong></p> <h3>Nivel de dificultad:</h3> <p><strong>Facil y Dificil</strong></p> <h3>Has seleccionado:</h3> <p><strong>Falladas, No contestadas, Con riesgo</strong></p> <div style="display:flex; gap:10px;padding-bottom: 10px;justify-content: space-between;"> <div style="display:flex; gap:10px; align-items: center;"> <h3>N° de preguntas:</h3> <p><strong>10</strong></p> </div> <div style="display:flex; gap:10px;align-items: center;"> <h3>Tiempo seleccionado:</h3> <p><strong>10min</strong></p> </div> </div> <div style="padding:10px;background-color:#E6EAF7;border-radius:16px;"> <div style="display:flex; gap:10px;justify-content:center;padding-top: 0.5rem;"> <i class="fa fa-exclamation-circle" style="font-size:24px" aria-hidden="true"></i> <h3>ATENCIÓN !!!</h3></div> <p style="padding-top:10px;text-align:center"> No dispones de 10 preguntas. Hay 5 preguntas con los filtros seleccionados.</p> <p style="text-align:center">¿Estás seguro/a de querer continuar? Recuerda que puedes volver atrás y modificar tu elección.</p></div> <p style="padding-top:10px"> Una vez iniciado el cuestionario, el tiempo se pondrá en marcha y no podrá pausarse. Podrás revisar posteriormente el examen dentro del apartado de "Test realizados" </p> </div>',
+        footer: '<div class"modal-design-buttons"> <button type="button" class="btn btn-primary" id="btn-closemodal" onclick="cancelTest({{id}})">Volver atrás</button> <button type="button" class="btn btn-primary" id="goexamen" onclick="createTest({{id}})">Iniciar examen</button></div>',
+    }, trigger)
+    .done(function(modal) {
+        trigger.click(function(){
+            modal.show();
+        });
+    });
+});
+{{/js}}
