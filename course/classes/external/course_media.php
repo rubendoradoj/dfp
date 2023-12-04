@@ -321,4 +321,20 @@ class course_media extends \core\external\exporter {
 
         return $amount;
     }
+
+    /**
+    * Get alls success answer by attempt id.
+    *
+    * @return array
+    */
+    public static function get_all_sections_by_course($courseId) {
+        global $DB;
+        
+        $sections = $DB->get_records_sql("
+            SELECT *
+            FROM {course_sections} cs
+            WHERE cs.course = " . $courseId);
+
+        return $sections;
+    }
 }
