@@ -6,11 +6,10 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/lib/tablelib.php');
 require_once($CFG->dirroot.'/notes/lib.php');
 
+global $DB, $USER;
+
 $id = required_param('id', PARAM_INT); // course id.
 
-//$url = new moodle_url('/report/testrealizados/index.php', array('id'=>$id));
-
-//$PAGE->set_url($url);
 $PAGE->set_pagelayout('course');
 
 $PAGE->navbar->add('Test realizados');
@@ -25,6 +24,8 @@ $context = context_course::instance($course->id);
 $PAGE->set_title("Test realizados");
 $PAGE->set_heading(format_string($course->fullname, true, array('context' => $context)), true);
 echo $OUTPUT->header();
+
+$getDescription = \core_course\external\course_media::get_description_by_quiz($course->id, $USER->id);
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable rui-quizattemptsummary mt-2 mb-0';
@@ -43,7 +44,6 @@ $table->align[] = 'right';
 $table->head[] = 'Sin responder';
 $table->align[] = 'right';
 
-//$table->head[] = get_string('marks', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
 $table->head[] = 'Calificación/10,00';
 $table->align[] = 'right';
 $table->size[] = '';
@@ -51,15 +51,20 @@ $table->size[] = '';
 $table->head[] = get_string('review', 'quiz');
 $table->align[] = 'right';
 $table->size[] = '';
-
 $row = array();
-$row[] = '<div><p style="margin-bottom: 0.25rem;">Cuestionario 1.1</p><p style="font-size: 10px">Enviado: martes, 10 de octubre de 2023, 11:26</p></div>';
-$row[] = 12;
-$row[] = 4;
-$row[] = 0;
-$row[] = 7.5;
-$row[] = 'Revision';
 
+foreach ($getDescription as $description) {
+    $link = new moodle_url('/mod/quiz/review.php', ['attempt' => $description->attemptId, 'cmid' => $description->cmid]);
+    $revision = '<a title="Revisar sus respuestas en este intento" href="'.$link.'">Revisión</a>';
+    
+    $table->data[] = array(
+                        $description->name, 
+                        $description->aciertos, 
+                        $description->fallos, 
+                        $description->pendientes,
+                        $description->nota,
+                        $revision);
+}
 $table->data['preview'] = $row;
 
 $output = '';

@@ -77,6 +77,88 @@ class course_media extends \core\external\exporter {
     }
 
     /**
+     * Get description by test realizados.
+     *
+     * @return Object
+     */
+    public static function get_description_by_quiz($courseId, $userId) {
+        global $DB, $PAGE, $OUTPUT;
+
+        $result_final = [];
+        $course = $DB->get_record_sql("
+                SELECT *
+                FROM {course} c
+                WHERE c.id = " . $courseId);
+
+        $all_attempts = array();
+        $activities = \course_modinfo::get_array_of_activities($course);
+        foreach($activities as $key1 => $value1){
+            $result = new \stdClass;
+            
+            if(is_object($value1)){
+                
+                if($value1->visible == true){
+                    if ($value1->mod === 'quiz'){   
+                        $quizobj_new = quiz_settings::create($value1->id);
+                        $quiz_new = $quizobj_new->get_quiz(); 
+                        
+                        $quizes_attempts = $DB->get_records_sql("
+                                SELECT *
+                                FROM {quiz_attempts} qa
+                                WHERE qa.quiz = ".$value1->id." AND qa.userid = ".$userId."");
+                        
+                        if(count($quizes_attempts) > 0){
+                            $attemptId = end($quizes_attempts)->id;
+                            $quiz_date = end($quizes_attempts)->timefinish;
+                            $quiz_state = end($quizes_attempts)->state;
+                            $cmid = $DB->get_record('course_modules', array('module' => '17', 'instance' => $value1->id));
+
+                            if($quiz_state === quiz_attempt::FINISHED){
+                                $name = self::attempt_date($quiz_date, $value1->name);
+                                $result->name = $name;
+
+                                $correctas = self::get_all_success_answer_by_attempt_id($attemptId);
+                                $flags_correct = self::get_flags_by_correct_questions($attemptId);
+                                $flags_wrong = self::get_flags_by_wrong_questions($attemptId);
+
+                                $result->aciertos = $correctas->aciertos - $flags_correct;
+                                $result->fallos = $correctas->fallos - $flags_wrong;
+                                $result->pendientes = $correctas->pendientes;
+
+                                $calculo_nota_real = end($quizes_attempts)->sumgrades > 0 ? (($result->aciertos - $flags_correct) - (($result->fallos - $flags_wrong) / 2)) * 10 / $quiz_new->sumgrades : 0;
+
+                                $sum = quiz_format_grade($quiz_new, $calculo_nota_real);
+                                $result->nota = $sum;
+
+                                $result->attemptId = $attemptId;
+                                $result->cmid = $cmid->id;
+
+                                array_push($result_final, $result);
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+        
+        return $result_final;
+    }
+
+    /**
+     * Generate a brief textual description of the current state of an attempt.
+     *
+     * @param $date the attempt
+     * @param $name the attempt
+     * @return string the appropriate lang string to describe the state.
+     */
+    public static function attempt_date($date, $name) {
+        return '<div><p style="margin-bottom: 0.25rem;">'.$name.'</p><p style="font-size: 10px">'.get_string('statefinisheddetails', 'quiz',
+        userdate($date)).'</p></div>';
+    }
+
+
+    /**
      * Get media DFPool in course.
      *
      * @return number

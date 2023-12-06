@@ -29,6 +29,7 @@
         ]
     }
 }}
+<p style="padding-top: 20px;">Selecciona los filtros que deseas para generar tu test personalizado. Debes seleccionar todos los apartados para poder iniciar el cuestionario.</p>
 <div class="container-generador">
     <div class="container-all-checks">
         <h3>Temas:</h3>
@@ -124,7 +125,7 @@ require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
     var closemodal = $('#btn-closemodal');
     ModalFactory.create({
         title: '<div class="modal-design"><h2>Generador de Test Personalizado</h2></div>',
-        body: '<div class="modal-design"> <h3 style="color: #000000;">Has elegido examinarte de lo siguiente:</h2> <h3>Temas seleccionados:</h3> <p><strong id="temas"></strong></p> <h3>Nivel de dificultad:</h3> <p><strong id="dificultad"></strong></p> <h3>Has seleccionado:</h3> <p><strong id="tipo"></strong></p> <div style="display:flex; gap:10px;padding-bottom: 10px;justify-content: space-between;"> <div style="display:flex; gap:10px; align-items: center;"> <h3>N° de preguntas:</h3> <p><strong id="cantidad"></strong></p> </div> <div style="display:flex; gap:10px;align-items: center;"> <h3>Tiempo seleccionado:</h3> <p><strong id="duracion"></strong></p> </div> </div> <div style="padding:10px;background-color:#E6EAF7;border-radius:16px;"> <div style="display:flex; gap:10px;justify-content:center;padding-top: 0.5rem;"> <i class="fa fa-exclamation-circle" style="font-size:24px" aria-hidden="true"></i> <h3>ATENCIÓN !!!</h3></div> <p style="padding-top:10px;text-align:center"> No dispones de 10 preguntas. Hay 5 preguntas con los filtros seleccionados.</p> <p style="text-align:center">¿Estás seguro/a de querer continuar? Recuerda que puedes volver atrás y modificar tu elección.</p></div> <p style="padding-top:10px"> Una vez iniciado el cuestionario, el tiempo se pondrá en marcha y no podrá pausarse. Podrás revisar posteriormente el examen dentro del apartado de "Test realizados" </p> </div>',
+        body: '<div class="modal-design"> <h3 style="color: #000000;">Has elegido examinarte de lo siguiente:</h2> <h3>Temas seleccionados:</h3> <p><strong id="temas"></strong></p> <h3>Nivel de dificultad:</h3> <p><strong id="dificultad"></strong></p> <h3>Tipos de pregunta:</h3> <p><strong id="tipo"></strong></p> <div style="display:flex; gap:10px;padding-bottom: 10px;justify-content: space-between;"> <div style="display:flex; gap:10px; align-items: center;"> <h3>N° de preguntas:</h3> <p><strong id="cantidad"></strong></p> </div> <div style="display:flex; gap:10px;align-items: center;"> <h3>Tiempo seleccionado:</h3> <p><strong id="duracion"></strong></p> </div> </div> <div style="padding:10px;background-color:#E6EAF7;border-radius:16px;"> <div style="display:flex; gap:10px;justify-content:center;padding-top: 0.5rem;"> <i class="fa fa-exclamation-circle" style="font-size:24px" aria-hidden="true"></i> <h3>ATENCIÓN !!!</h3></div> <p id="alertCantidad" style="padding-top:10px;text-align:center"></p> <p style="text-align:center">¿Estás seguro/a de querer continuar? Recuerda que puedes volver atrás y modificar tu elección.</p></div> <p style="padding-top:10px"> Una vez iniciado el cuestionario, el tiempo se pondrá en marcha y no podrá pausarse. Podrás revisar posteriormente el examen dentro del apartado de "Test realizados" </p> </div>',
         footer: '<div class"modal-design-buttons"> <button type="button" class="btn btn-primary" id="btn-closemodal" onclick="cancelTest({{id}})">Volver atrás</button> <button type="button" class="btn btn-primary" id="goexamen" onclick="createTest({{id}})">Iniciar examen</button></div>',
     }, trigger)
     .done(function(modal) {
@@ -135,6 +136,8 @@ require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
             var tip = document.getElementById("tipo");
             var can = document.getElementById("cantidad");
             var dur = document.getElementById("duracion");
+            var btnOk = document.getElementById("goexamen");
+            var alertCantidad = document.getElementById("alertCantidad");
 
             var temas = localStorage.getItem('temas');
             var dificultad = localStorage.getItem('dificultad');
@@ -142,18 +145,36 @@ require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
             var cantidad = localStorage.getItem('cantidad');
             var duracion = localStorage.getItem('duracion');
 
+            if(temas != "" && temas != null){
+                if(dificultad != "" && dificultad != null){
+                    if(tipo != "" && tipo != null){
+                        if(cantidad != "" && cantidad != null){
+                            if(duracion != "" && duracion != null){
+                                localStorage.setItem("action", false);
+                            }
+                        }
+                    }
+                }
+            }
+
+            var action = localStorage.getItem('action');
+
             var new_tem = "";
 
-            for(var i=0; i<temas.length; i++){
-                if(temas[i] !== ','){
-                    if(isNaN(temas[i + 1])){
-                        if(temas.length - 1 === i){
-                            new_tem += temas[i];
+            if(temas[0] == "T"){
+                new_tem = "Todos";
+            } else{
+                for(var i=0; i<temas.length; i++){
+                    if(temas[i] !== ','){
+                        if(isNaN(temas[i + 1])){
+                            if(temas.length - 1 === i){
+                                new_tem += temas[i];
+                            }else{
+                                new_tem += temas[i] + ', ';
+                            }
                         }else{
-                            new_tem += temas[i] + ', ';
+                            new_tem += temas[i];
                         }
-                    }else{
-                        new_tem += temas[i];
                     }
                 }
             }
@@ -174,7 +195,16 @@ require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
             dif.textContent = new_dif.join(', ');
             tip.textContent = new_tip.join(', ');
             can.textContent = new_cant;
-            dur.textContent = new_dur + 'min';
+            dur.textContent = new_dur + ' min';
+            alertCantidad.textContent = 'No dispones de ' + new_cant + ' preguntas. Hay 5 preguntas con los filtros seleccionados.';
+
+            if(action == 'true'){
+                btnOk.disabled = true;
+            }
+            
+            if(action == 'false'){
+                btnOk.disabled = false;
+            }
 
         });
     });
