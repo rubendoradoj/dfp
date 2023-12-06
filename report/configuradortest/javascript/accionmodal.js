@@ -1,13 +1,13 @@
+localStorage.setItem("action", true);
+
 const createTest = (id) => {
+    const action_a = localStorage.getItem("action");
 
-    const temas = localStorage.getItem("temas");
-    const dificultad = localStorage.getItem("dificultad");
-    const tipo = localStorage.getItem("tipo");
-    const cantidad = localStorage.getItem("cantidad");
-    const duracion = localStorage.getItem("duracion");
-
-    console.log('Creating test: ', [temas, dificultad, tipo, cantidad, duracion]);
-    cancelTest(id);
+    if(action_a == "false"){
+        console.log('Create test: ', id);
+        cancelTest(id);
+        location.reload();
+    }
 }
 
 const cancelTest = (id) => {
