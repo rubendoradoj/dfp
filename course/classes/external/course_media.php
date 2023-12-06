@@ -25,6 +25,7 @@ namespace core_course\external;
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\quiz_settings;
+use mod_quiz\quiz_attempt;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/config.php');
 /**
