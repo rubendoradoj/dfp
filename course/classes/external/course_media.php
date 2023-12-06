@@ -91,10 +91,10 @@ class course_media extends \core\external\exporter {
                 FROM {course} c
                 WHERE c.id = " . $courseId);
 
-        $all_attempts = array();
+        $count = 0;
         $activities = \course_modinfo::get_array_of_activities($course);
         foreach($activities as $key1 => $value1){
-            $result = new \stdClass;
+            
             
             if(is_object($value1)){
                 
@@ -104,37 +104,40 @@ class course_media extends \core\external\exporter {
                         $quiz_new = $quizobj_new->get_quiz(); 
                         
                         $quizes_attempts = $DB->get_records_sql("
-                                SELECT *
-                                FROM {quiz_attempts} qa
-                                WHERE qa.quiz = ".$value1->id." AND qa.userid = ".$userId."");
+                            SELECT *
+                            FROM {quiz_attempts} qa
+                            WHERE qa.quiz = ".$value1->id." AND qa.userid = ".$userId."");
                         
                         if(count($quizes_attempts) > 0){
-                            $attemptId = end($quizes_attempts)->id;
-                            $quiz_date = end($quizes_attempts)->timefinish;
-                            $quiz_state = end($quizes_attempts)->state;
-                            $cmid = $DB->get_record('course_modules', array('module' => '17', 'instance' => $value1->id));
 
-                            if($quiz_state === quiz_attempt::FINISHED){
-                                $name = self::attempt_date($quiz_date, $value1->name);
-                                $result->name = $name;
+                            foreach ($quizes_attempts as $attempt) {
+                                $result = new \stdClass;
+                                $attemptId = $attempt->id;
+                                $quiz_date = $attempt->timefinish;
+                                $quiz_state = $attempt->state;
+                                $cmid = $DB->get_record('course_modules', array('module' => '17', 'instance' => $value1->id));
 
-                                $correctas = self::get_all_success_answer_by_attempt_id($attemptId);
-                                $flags_correct = self::get_flags_by_correct_questions($attemptId);
-                                $flags_wrong = self::get_flags_by_wrong_questions($attemptId);
+                                if($quiz_state == quiz_attempt::FINISHED){
+                                    $name = self::attempt_date($quiz_date, $value1->name);
+                                    $result->name = $name;
 
-                                $result->aciertos = $correctas->aciertos - $flags_correct;
-                                $result->fallos = $correctas->fallos - $flags_wrong;
-                                $result->pendientes = $correctas->pendientes;
+                                    $correctas = self::get_all_success_answer_by_attempt_id($attemptId);
+                                    $flags_correct = self::get_flags_by_correct_questions($attemptId);
+                                    $flags_wrong = self::get_flags_by_wrong_questions($attemptId);
 
-                                $calculo_nota_real = end($quizes_attempts)->sumgrades > 0 ? (($result->aciertos - $flags_correct) - (($result->fallos - $flags_wrong) / 2)) * 10 / $quiz_new->sumgrades : 0;
+                                    $result->aciertos = $correctas->aciertos - $flags_correct;
+                                    $result->fallos = $correctas->fallos - $flags_wrong;
+                                    $result->pendientes = $correctas->pendientes;
 
-                                $sum = quiz_format_grade($quiz_new, $calculo_nota_real);
-                                $result->nota = $sum;
+                                    $calculo_nota_real = $attempt->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * 10 / $quiz_new->sumgrades : 0;
 
-                                $result->attemptId = $attemptId;
-                                $result->cmid = $cmid->id;
+                                    $sum = quiz_format_grade($quiz_new, $calculo_nota_real);
+                                    $result->nota = $sum;
 
-                                array_push($result_final, $result);
+                                    $result->attemptId = $attemptId;
+                                    $result->cmid = $cmid->id;
+                                    array_push($result_final, $result);
+                                }
                             }
                         }
                         
