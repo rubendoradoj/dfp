@@ -10,9 +10,11 @@ require_once($CFG->dirroot.'/notes/lib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/course/modlib.php');
 
-global $COURSE;
+global $COURSE, $DB, $CFG;
 $id = required_param('id', PARAM_INT); // course id.
 $cm = get_coursemodule_from_id('quiz', $id);
+$array = new stdClass();
+$url_re = "";
 
 $PAGE->set_pagelayout('course');
 
@@ -31,8 +33,6 @@ echo $OUTPUT->header();
 
 $sections = \core_course\external\course_media::get_all_sections_by_course($COURSE->id);
 
-$array = new stdClass();
-$array->generador = "Hola";
 $questions = [];
 $count_ini = 0;
 if(count($sections) === 27) {$count_ini = 0;}
@@ -48,6 +48,7 @@ for($i = $count_ini; $i < $total; $i++){
 
 $array->id = $id;
 $array->questions = $questions;
+$array->countQuestions = count($questions);
 
 echo $OUTPUT->render_from_template('report_configuradortest/generador', $array);
 $PAGE->requires->js('/report/configuradortest/javascript/radiodetect.js');
