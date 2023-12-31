@@ -26,8 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\quiz_settings;
 use mod_quiz\quiz_attempt;
-use html_writer;
-
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/config.php');
 /**
@@ -37,17 +35,17 @@ require_once($CFG->dirroot . '/config.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_media extends \core\external\exporter {
+
     /**
      * Get media of student by course.
      *
      * @return number
      */
-    public static function get_media_by_course($userId, $courseId) {
+    public static function get_media_by_course($courseId, $userId) {
         global $DB, $USER;
         
         $sum_medias_by_quiz = 0; 
-        $count_quiz = 0; 
-        $count = 0;
+        $count_quiz = 0;
         $data_grades = [];
 
         $course = $DB->get_record_sql("
@@ -65,7 +63,7 @@ class course_media extends \core\external\exporter {
                         $quizobj_new = quiz_settings::create($value1->id);
                         $quiz_new = $quizobj_new->get_quiz();
                         $data_grades = \core_course\external\course_media::get_sum_grades_by_quiz($userId, $quiz_new->id, $quiz_new);
-                        $count += 1; 
+
                         //Obtener sumatoria de medias en el curso
                         $sum_medias_by_quiz += $data_grades[0];
                         $count_quiz += $data_grades[1]; 
@@ -76,7 +74,6 @@ class course_media extends \core\external\exporter {
         
         $media_by_course = $count_quiz > 0 ? $sum_medias_by_quiz/$count_quiz: 1;
         
-        //return $courseId;
         return round($media_by_course, 2);
     }
 
@@ -248,7 +245,7 @@ class course_media extends \core\external\exporter {
     public static function get_media_by_quiz($userId, $quizId, $quiz) {
         global $DB;
 
-        $sum_total = 0; /*cambio nuevo -----*/
+        $sum_total = 0;
 
         $quizes_attempts = $DB->get_records_sql("
                 SELECT *
