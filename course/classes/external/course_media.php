@@ -189,7 +189,7 @@ class course_media extends \core\external\exporter {
                 WHERE en.courseid = " . $courseId);
 
         foreach ($users as $user) {
-            $media_by_course += self::get_media_by_course($user->userid, $courseId);
+            $media_by_course += self::get_media_by_course($courseId, $user->userid);
         }
 
         $media_by_student = count($users) > 0 ? $media_by_course / count($users) : 0;
