@@ -12,6 +12,8 @@ let tipo = [];
 let cantidad = '';
 let duracion = '';
 var text = '';
+var estado = [false, false, false, false, false];
+btn.disabled = true;
 
 checkTemas.forEach((checkbox, index) => {
     let check_tema_all = document.getElementById("btn-check-all");
@@ -28,7 +30,19 @@ checkTemas.forEach((checkbox, index) => {
                 temas[0] = "";
                 temas[index] = index;
             }
+            estado[0] =  true;
+            if(estado.includes(true) && !estado.includes(false)){btn.disabled = false;}
         }else{
+            var valuesTemasChecked = [];
+            var checkTemasChecked = document.querySelectorAll('input[name="check-tema"]:checked');
+            Array.prototype.forEach.call(checkTemasChecked, function(el) {
+                valuesTemasChecked.push(el.value);
+            });
+            var anyCheckTemas =  valuesTemasChecked.includes('on');
+            if(!anyCheckTemas) {
+                estado[0] =  false;
+                if(estado.includes(false)){btn.disabled = true;}
+            }
             delete temas[index];
         }
     });
@@ -67,7 +81,19 @@ checkDif.forEach((checkbox, index) => {
                     check_dif_todos.checked = false;
                     break;
             }
+            estado[1] =  true;
+            if(estado.includes(true) && !estado.includes(false)){btn.disabled = false;}
         }else{
+            var valuesDifChecked = [];
+            var checkDifChecked = document.querySelectorAll('input[name="check-dif"]:checked');
+            Array.prototype.forEach.call(checkDifChecked, function(el) {
+                valuesDifChecked.push(el.value);
+            });
+            var anyCheckDif =  valuesDifChecked.includes('on');
+            if(!anyCheckDif) {
+                estado[1] =  false;
+                if(estado.includes(false)){btn.disabled = true;}
+            }
             delete dificultad[index];
         }
     });
@@ -106,7 +132,19 @@ checkTipo.forEach((checkbox, index) => {
                     check_type_todos.checked = false;
                     break;
             }
+            estado[2] =  true;
+            if(estado.includes(true) && !estado.includes(false)){btn.disabled = false;}
         }else{
+            var valuesTipoChecked = [];
+            var checkTipoChecked = document.querySelectorAll('input[name="check-tipo"]:checked');
+            Array.prototype.forEach.call(checkTipoChecked, function(el) {
+                valuesTipoChecked.push(el.value);
+            });
+            var anyCheckTipo =  valuesTipoChecked.includes('on');
+            if(!anyCheckTipo) {
+                estado[2] =  false;
+                if(estado.includes(false)){btn.disabled = true;}
+            }
             delete tipo[index];
         }
     });
@@ -172,6 +210,19 @@ checkCant.forEach((checkbox, index) => {
                     break;
             }
         }
+        var valuesCantChecked = [];
+        var checkCantChecked = document.querySelectorAll('input[name="check-cant"]:checked');
+        Array.prototype.forEach.call(checkCantChecked, function(el) {
+            valuesCantChecked.push(el.value);
+        });
+        var anyCheckCant =  valuesCantChecked.includes('on');
+        if(anyCheckCant) {
+            estado[3] =  true;
+            if(estado.includes(true) && !estado.includes(false)){btn.disabled = false;}
+        } else {
+            estado[3] =  false;
+            if(estado.includes(false)){btn.disabled = true;}
+        }
     });
 });
 
@@ -234,6 +285,19 @@ checkDur.forEach((checkbox, index) => {
                     check_dur_d10.checked = false;
                     break;
             }
+        }
+        var valuesDurChecked = [];
+        var checkDurChecked = document.querySelectorAll('input[name="check-dur"]:checked');
+        Array.prototype.forEach.call(checkDurChecked, function(el) {
+            valuesDurChecked.push(el.value);
+        });
+        var anyCheckDur=  valuesDurChecked.includes('on');
+        if(anyCheckDur) {
+            estado[4] =  true;
+            if(estado.includes(true) && !estado.includes(false)){btn.disabled = false;}
+        } else {
+            estado[4] =  false;
+            if(estado.includes(false)){btn.disabled = true;}
         }
     });
 });

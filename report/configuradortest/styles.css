@@ -69,7 +69,31 @@ input[type="checkbox"]:checked+label{
     color: #e6eaf7 !important;
 }
 
-.modal-design h2{
+.loader-modal {
+    border: 2px solid rgba(255,255,255,.3);
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    margin-left: -20px;
+    margin-top: -15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.modal-design-title{
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-design-title h2{
     font-size: 20px;
     line-height: 24px;
 }
@@ -92,3 +116,7 @@ input[type="checkbox"]:checked+label{
 .close:hover {
     background-color: #002db3 !important;
 }
+
+/* #containerAlerta{
+    display: none;
+} */

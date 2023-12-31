@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\quiz_settings;
 use mod_quiz\quiz_attempt;
+use html_writer;
+
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/config.php');
 /**
@@ -35,35 +37,35 @@ require_once($CFG->dirroot . '/config.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_media extends \core\external\exporter {
-
     /**
      * Get media of student by course.
      *
      * @return number
      */
-    public static function get_media_by_course($courseId, $userId) {
+    public static function get_media_by_course($userId, $courseId) {
         global $DB, $USER;
-
-        $sum_medias_by_quiz = 0;
-        $count_quiz = 0;
+        
+        $sum_medias_by_quiz = 0; 
+        $count_quiz = 0; 
+        $count = 0;
         $data_grades = [];
 
         $course = $DB->get_record_sql("
                 SELECT *
                 FROM {course} c
                 WHERE c.id = " . $courseId);
-
+        
         /*Calculo de Media por alumno en cada curso */
         $all_attempts = array();
         $activities = \course_modinfo::get_array_of_activities($course);
         foreach($activities as $key1 => $value1){
             if(is_object($value1)){
                 if($value1->visible==true){
-                    if ($value1->mod == 'quiz'){
+                    if ($value1->mod === 'quiz'){
                         $quizobj_new = quiz_settings::create($value1->id);
                         $quiz_new = $quizobj_new->get_quiz();
-                        $data_grades = \core_course\external\course_media::get_sum_grades_by_quiz($userId, $quiz_new->id, $quiz_new); 
-                                              
+                        $data_grades = \core_course\external\course_media::get_sum_grades_by_quiz($userId, $quiz_new->id, $quiz_new);
+                        $count += 1; 
                         //Obtener sumatoria de medias en el curso
                         $sum_medias_by_quiz += $data_grades[0];
                         $count_quiz += $data_grades[1]; 
@@ -71,10 +73,20 @@ class course_media extends \core\external\exporter {
                 }
             }
         }
-
-        $media_by_course = $count_quiz > 0 ? $sum_medias_by_quiz/$count_quiz : 0;
-
+        
+        $media_by_course = $count_quiz > 0 ? $sum_medias_by_quiz/$count_quiz: 1;
+        
+        //return $courseId;
         return round($media_by_course, 2);
+    }
+
+    /**
+     * Get mobject bye quiz.
+     *
+     * @return Object
+     */
+    public static function get_object_by_quiz($quizId) {
+        return quiz_settings::create($quizId);
     }
 
     /**
@@ -145,22 +157,21 @@ class course_media extends \core\external\exporter {
                 }
             }
         }
-        
-        return $result_final;
+
+        $reversed = array_reverse($result_final);
+        return $reversed;
     }
 
     /**
      * Generate a brief textual description of the current state of an attempt.
      *
-     * @param $date the attempt
-     * @param $name the attempt
+     * @param quiz_attempt $attemptobj the attempt
      * @return string the appropriate lang string to describe the state.
      */
     public static function attempt_date($date, $name) {
         return '<div><p style="margin-bottom: 0.25rem;">'.$name.'</p><p style="font-size: 10px">'.get_string('statefinisheddetails', 'quiz',
         userdate($date)).'</p></div>';
     }
-
 
     /**
      * Get media DFPool in course.
@@ -181,7 +192,7 @@ class course_media extends \core\external\exporter {
                 WHERE en.courseid = " . $courseId);
 
         foreach ($users as $user) {
-            $media_by_course += self::get_media_by_course($courseId, $user->userid);
+            $media_by_course += self::get_media_by_course($user->userid, $courseId);
         }
 
         $media_by_student = count($users) > 0 ? $media_by_course / count($users) : 0;
@@ -237,7 +248,7 @@ class course_media extends \core\external\exporter {
     public static function get_media_by_quiz($userId, $quizId, $quiz) {
         global $DB;
 
-        $sum_total = 0;
+        $sum_total = 0; /*cambio nuevo -----*/
 
         $quizes_attempts = $DB->get_records_sql("
                 SELECT *
@@ -294,6 +305,7 @@ class course_media extends \core\external\exporter {
         global $DB, $COURSE;
 
         $all_attempts = array();
+        $count = 0;
         $sum_approved = 0;
         $sum_suspended = 0;
         $activities = \course_modinfo::get_array_of_activities($COURSE); /*cambio nuevo -----*/
@@ -313,7 +325,7 @@ class course_media extends \core\external\exporter {
                             $correctas = self::get_all_success_answer_by_attempt_id($attempt->id);
                             $flags_correct = self::get_flags_by_correct_questions($attempt->id);
                             $flags_wrong = self::get_flags_by_wrong_questions($attempt->id);
-                            $nota_final = $quizobj_new->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * $quizobj_new->grade / $quizobj_new->sumgrades : 0;
+                            $nota_final = $quiz_new->sumgrades > 0 ? (($correctas->aciertos - $flags_correct) - (($correctas->fallos - $flags_wrong) / 2)) * $quiz_new->grade / $quiz_new->sumgrades : 0;
                             if($nota_final >= 5) {
                                 $sum_approved += 1;
                             } else {
@@ -408,11 +420,11 @@ class course_media extends \core\external\exporter {
         return $amount;
     }
 
-    /**
-    * Get alls success answer by attempt id.
-    *
-    * @return array
-    */
+     /**
+     * Get alls success answer by attempt id.
+     *
+     * @return array
+     */
     public static function get_all_sections_by_course($courseId) {
         global $DB;
         
@@ -422,5 +434,202 @@ class course_media extends \core\external\exporter {
             WHERE cs.course = " . $courseId);
 
         return $sections;
+    }
+
+    /**
+     * Get alls questions by course.
+     *
+     * @return array
+     */
+    public static function get_all_questions_by_course($courseId) {
+        global $DB;
+        
+        $questions = $DB->get_records_sql("
+                    SELECT 
+                        q.id as quizid, 
+                        q.course, 
+                        q.name, 
+                        qa.id, 
+                        qa.questionusageid, 
+                        qa.slot, 
+                        qa.questionid, 
+                        qa.flagged, 
+                        qa.questionsummary
+                    FROM {quiz} as q
+                    JOIN {quiz_attempts} AS quiza ON quiza.quiz = q.id
+                    JOIN {question_usages} AS qu ON qu.id = quiza.uniqueid
+                    JOIN {question_attempts} AS qa ON qa.questionusageid = qu.id
+                    WHERE q.course = " . $courseId);
+
+        return $questions;
+    }
+
+    /**
+     * Get questions by quiz.
+     *
+     * @return array
+     */
+    public static function get_questions_by_quiz($courseId, $quizId, $userId, $dificultad, $tipo) {
+        global $DB;
+
+        $array_dificultad = explode(",", $dificultad);
+        $array_tipo = explode(",", $tipo);
+        $sql_dif = "qc.name LIKE '%facil%' || qc.name LIKE '%medio%' || qc.name LIKE '%dificil%'";
+        $sql_tip = "qas.state LIKE '%todo%' || qas.state LIKE '%gradedwrong%'";
+        $sql_flag = "";
+        $sql_group_by = "qa.questionid";
+
+        switch (count($array_dificultad)) {
+            case 1:
+                if(strtolower($array_dificultad[0]) != 'todos'){
+                    $sql_dif = "qc.name LIKE '%".strtolower($array_dificultad[0])."%'";
+                } else {
+                    $sql_dif = "qc.name LIKE '%facil%' || qc.name LIKE '%medio%' || qc.name LIKE '%dificil%'";
+                }
+                break;
+            case 2:
+                $sql_dif = "qc.name LIKE '%".strtolower($array_dificultad[0])."%' || qc.name LIKE '%".strtolower($array_dificultad[1])."%'";
+                break;
+            case 3:
+                $sql_dif = "qc.name LIKE '%facil%' || qc.name LIKE '%medio%' || qc.name LIKE '%dificil%'";
+                break;
+        }
+
+        if(in_array("Falladas", $array_tipo) && count($array_tipo) == 1){
+            $sql_tip = "qas.state LIKE '%gradedwrong%'";
+        }
+
+        if(in_array("Sin responder", $array_tipo) && count($array_tipo) == 1){
+            $sql_tip = "qas.state LIKE '%todo%'";
+        }
+
+        if(in_array("Con riesgo", $array_tipo) && count($array_tipo) == 1){
+            $sql_tip = "qas.state LIKE '%todo%'";
+        }
+
+        if(in_array("Todos", $array_tipo) && count($array_tipo) == 1){
+            $sql_tip = "qas.state LIKE '%todo%' || qas.state LIKE '%gradedwrong%'";
+            $sql_group_by = "qa.questionid, qas.state";
+        }
+
+        if(in_array("Sin responder", $array_tipo) && in_array("Falladas", $array_tipo)){
+            $sql_tip = "qas.state LIKE '%todo%' || qas.state LIKE '%gradedwrong%'";
+            $sql_group_by = "qa.questionid, qas.state";
+        }
+
+        if(in_array("Con riesgo", $array_tipo)){
+            $sql_flag = "qa.flagged = 1";
+        } else {
+            $sql_flag = "qa.flagged = 0 || qa.flagged = 1";
+        }
+
+        $questions_by_quiz = $DB->get_records_sql("
+            SELECT 
+                qa.id as attemptid,
+                qu.id as usageid,
+                qa.questionid,
+                qa.flagged,
+                qas.userid,
+                qas.state, 
+                qc.name,
+                quiza.id as quizaid,
+                quiza.quiz
+            FROM {question_categories} as qc
+            JOIN {question_bank_entries} AS qbe ON qbe.questioncategoryid = qc.id
+            JOIN {question_references} as qr on qr.questionbankentryid  = qbe.id
+            JOIN {question_usages} as qu on qu.contextid = qr.usingcontextid
+            JOIN {question_attempts} AS qa on qa.questionusageid = qu.id
+            JOIN {question_attempt_steps} as qas on qas.questionattemptid = qa.id
+            JOIN {quiz_attempts} AS quiza on quiza.userid = qas.userid
+            JOIN {quiz} AS q on q.id = quiza.quiz
+            WHERE 
+                (".$sql_dif.") && 
+                qas.userid = ".$userId." && 
+                (".$sql_tip.") && 
+                q.id = ".$quizId." && 
+                q.course = ".$courseId." &&
+                (".$sql_flag.")
+            GROUP BY ". $sql_group_by);
+
+        return $questions_by_quiz;
+    }
+
+    /**
+     * Get all quizes by course.
+     *
+     * @return array
+     */
+    public static function get_quizes_by_course($courseId) {
+        global $DB;
+        
+        $quizes = $DB->get_records_sql("
+                    SELECT 
+                        cm.id as cmid,
+                        cm.instance as quizid, 
+                        cs.name, 
+                        cs.section
+                    FROM {course_modules} AS cm
+                    JOIN {course_sections} AS cs ON cs.id = cm.section
+                    WHERE cm.module = 17 
+                        && cs.section != 0 
+                        && cm.course = ".$courseId);
+
+        return $quizes;
+    }
+
+    /**
+     * Get quizes by theme.
+     *
+     * @return array
+     */
+    public static function get_quizes_by_theme($courseId, $theme) {
+        global $DB;
+        
+        $quizes = $DB->get_records_sql("
+                    SELECT 
+                        cm.id as cmid, 
+                        cm.instance as quizid, 
+                        cs.name, 
+                        cs.section
+                    FROM {course_modules} AS cm
+                    JOIN {course_sections} AS cs ON cs.id = cm.section
+                    WHERE cm.module = 17 
+                        && cs.section != 0 
+                        && cm.course = ".$courseId." 
+                        && cs.section = " . $theme + 1);
+
+        return $quizes;
+    }
+
+    /**
+     * Get quiz by id.
+     *
+     * @return array
+     */
+    public static function get_quiz_by_id($quizId) {
+        global $DB;
+        
+        $quiz = $DB->get_records_sql("
+                    SELECT *
+                    FROM {quiz} AS q
+                    WHERE q.id = " . $quizId);
+
+        return $quiz;
+    }
+
+    /**
+     * Get test personalized.
+     *
+     * @return array
+     */
+    public static function get_test_personalized() {
+        global $DB;
+        
+        $test_personalized = $DB->get_records_sql("
+                    SELECT *
+                    FROM {quiz} AS q
+                    WHERE q.name LIKE '%personalizado%'");
+
+        return $test_personalized;
     }
 }
